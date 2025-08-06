@@ -1,0 +1,239 @@
+<div class="container-fluid">
+  <div class="row">
+    <!-- Profile Header -->
+    <div class="col-12">
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+              <div class="profile-avatar">
+<%= profile_avatar(@profile, size: 120) %>
+              </div>
+            </div>
+            <div class="col-md-10">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h2 class="mb-1"><%= @profile.display_name %></h2>
+                  <p class="text-muted mb-2">
+                    <i class="fas fa-user-tag me-2"></i>
+                    <%= @user.user_type.titleize %>
+                  </p>
+                  <% if @profile.location_city.present? %>
+                    <p class="text-muted mb-2">
+                      <i class="fas fa-map-marker-alt me-2"></i>
+                      <%= @profile.location_city %><%= ", #{@profile.location_state}" if @profile.location_state.present? %>
+                    </p>
+                  <% end %>
+                  <% if @profile.bio.present? %>
+                    <p class="mb-0"><%= truncate(@profile.bio, length: 150) %></p>
+                  <% end %>
+                </div>
+                <div class="d-flex gap-2">
+                  <% if @is_own_profile %>
+                    <%= link_to "Edit Profile", edit_profile_path(@profile), class: "btn btn-primary" %>
+                    <div class="btn-group">
+                      <button class="btn btn-outline-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-share me-2"></i>Share My Profile
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareProfile('<%= share_profile_url(@profile) %>', '<%= @meta_title || @profile.display_name %>')">
+                            <i class="fas fa-link me-2"></i>Copy Link
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToWhatsApp('<%= share_profile_url(@profile) %>', 'Check out my LinkSports profile!')">
+                            <i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToTwitter('<%= share_profile_url(@profile) %>', 'Check out my LinkSports profile!')">
+                            <i class="fab fa-twitter me-2 text-info"></i>Twitter
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToLinkedIn('<%= share_profile_url(@profile) %>')">
+                            <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToFacebook('<%= share_profile_url(@profile) %>')">
+                            <i class="fab fa-facebook me-2 text-primary"></i>Facebook
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  <% else %>
+                    <button class="btn btn-outline-primary">
+                      <i class="fas fa-user-plus me-2"></i>Connect
+                    </button>
+                    <div class="btn-group">
+                      <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-share me-2"></i>Share
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareProfile('<%= share_profile_url(@profile) %>', '<%= @meta_title || @profile.display_name %>')">
+                            <i class="fas fa-link me-2"></i>Copy Link
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToWhatsApp('<%= share_profile_url(@profile) %>', 'Check out <%= @profile.display_name %> on LinkSports!')">
+                            <i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToTwitter('<%= share_profile_url(@profile) %>', 'Check out <%= @profile.display_name %> on LinkSports!')">
+                            <i class="fab fa-twitter me-2 text-info"></i>Twitter
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToLinkedIn('<%= share_profile_url(@profile) %>')">
+                            <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn
+                          </a>
+                        </li>
+                        <li>
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToFacebook('<%= share_profile_url(@profile) %>')">
+                            <i class="fab fa-facebook me-2 text-primary"></i>Facebook
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <!-- About Section -->
+      <% if @profile.bio.present? %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-info-circle me-2"></i>About
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-0"><%= simple_format(@profile.bio) %></p>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Sports Section -->
+      <% if @user_sports.any? %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-medal me-2"></i>Sports & Skills
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <% @user_sports.each do |user_sport| %>
+                <div class="col-md-6 mb-3">
+                  <div class="sport-card p-3 border rounded">
+                    <div class="d-flex justify-content-between align-items-start">
+                      <div>
+                        <h6 class="mb-1">
+                          <%= user_sport.sport.name %>
+                          <% if user_sport.primary? %>
+                            <span class="badge bg-primary ms-1">Primary</span>
+                          <% end %>
+                        </h6>
+                        <% if user_sport.position.present? %>
+                          <p class="text-muted small mb-1">Position: <%= user_sport.position %></p>
+                        <% end %>
+                        <p class="text-muted small mb-0">
+                          <%= user_sport.skill_level.titleize %> • 
+                          <%= pluralize(user_sport.years_experience, 'year') %> experience
+                        </p>
+                      </div>
+                      <div class="skill-level-badge">
+                        <span class="badge bg-<%= skill_level_color(user_sport.skill_level) %>">
+                          <%= user_sport.skill_level.titleize %>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Type-specific sections -->
+      <%= render "profiles/#{@user.user_type}_details", profile: @profile if @profile.type %>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Contact Info -->
+      <div class="card mb-4">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-address-book me-2"></i>Contact Info
+          </h6>
+        </div>
+        <div class="card-body">
+          <% if @profile.website_url.present? %>
+            <p class="mb-2">
+              <i class="fas fa-globe me-2 text-muted"></i>
+              <%= link_to @profile.website_url, @profile.website_url, target: "_blank", class: "text-decoration-none" %>
+            </p>
+          <% end %>
+          <% if @profile.instagram_url.present? %>
+            <p class="mb-2">
+              <i class="fab fa-instagram me-2 text-muted"></i>
+              <%= link_to "Instagram", @profile.instagram_url, target: "_blank", class: "text-decoration-none" %>
+            </p>
+          <% end %>
+          <% if @profile.youtube_url.present? %>
+            <p class="mb-0">
+              <i class="fab fa-youtube me-2 text-muted"></i>
+              <%= link_to "YouTube", @profile.youtube_url, target: "_blank", class: "text-decoration-none" %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="card">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="fas fa-chart-line me-2"></i>Stats
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="row text-center">
+            <div class="col-4">
+              <div class="stat-item">
+                <h5 class="mb-0"><%= @user.posts_count %></h5>
+                <small class="text-muted">Posts</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="stat-item">
+                <h5 class="mb-0"><%= @user.connections_count %></h5>
+                <small class="text-muted">Connections</small>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="stat-item">
+                <h5 class="mb-0"><%= @user_sports.count %></h5>
+                <small class="text-muted">Sports</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

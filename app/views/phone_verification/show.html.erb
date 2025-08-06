@@ -1,0 +1,109 @@
+<div class="container-fluid bg-light min-vh-100 d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <!-- Header -->
+            <div class="text-center mb-4">
+              <div class="text-primary mb-3">
+                <i class="fas fa-mobile-alt fa-3x"></i>
+              </div>
+              <h3 class="fw-bold">Phone Verification</h3>
+              <p class="text-muted">
+                We've sent a verification code to<br>
+                <strong><%= @phone %></strong>
+              </p>
+            </div>
+
+            <!-- Flash Messages -->
+            <% if flash[:notice] %>
+              <div class="alert alert-success mb-4">
+                <i class="fas fa-check-circle me-2"></i>
+                <%= flash[:notice] %>
+              </div>
+            <% end %>
+
+            <% if flash[:alert] %>
+              <div class="alert alert-danger mb-4">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <%= flash[:alert] %>
+              </div>
+            <% end %>
+
+            <!-- Verification Form -->
+            <%= form_with url: phone_verification_path, method: :post, local: true, class: "verification-form" do |f| %>
+              <%= hidden_field_tag :phone, @phone %>
+              <%= hidden_field_tag :login, @login_mode %>
+              
+              <div class="mb-4">
+                <label for="verification_code" class="form-label fw-bold">Enter Verification Code</label>
+                <div class="verification-input-group">
+                  <%= text_field_tag :verification_code, "", 
+                                    class: "form-control form-control-lg text-center", 
+                                    placeholder: "000000", 
+                                    maxlength: 6,
+                                    pattern: "[0-9]{6}",
+                                    autocomplete: "one-time-code",
+                                    autofocus: true,
+                                    style: "letter-spacing: 8px; font-size: 24px;" %>
+                </div>
+                <div class="form-text text-center">
+                  <i class="fas fa-clock me-1"></i>
+                  Code expires in 10 minutes
+                </div>
+              </div>
+
+              <div class="d-grid mb-4">
+                <%= f.submit @login_mode ? "Sign In" : "Verify & Continue", 
+                            class: "btn btn-primary btn-lg" %>
+              </div>
+            <% end %>
+
+            <!-- Resend Code -->
+            <div class="text-center">
+              <p class="text-muted mb-3">Didn't receive the code?</p>
+              <%= form_with url: phone_verification_resend_path, method: :post, local: true do |f| %>
+                <%= hidden_field_tag :phone, @phone %>
+                <%= hidden_field_tag :login, @login_mode %>
+                <%= f.submit "Resend Code", class: "btn btn-outline-primary" %>
+              <% end %>
+            </div>
+
+            <!-- Change Phone Number -->
+            <div class="text-center mt-4">
+              <hr class="my-3">
+              <p class="text-muted small">
+                Wrong number? 
+                <%= link_to @login_mode ? "Back to Sign In" : "Back to Sign Up", 
+                           @login_mode ? new_user_session_path : new_user_registration_path, 
+                           class: "text-primary text-decoration-none" %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Auto-submit form when 6 digits are entered -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const verificationInput = document.getElementById('verification_code');
+  const form = document.querySelector('.verification-form');
+  
+  verificationInput.addEventListener('input', function() {
+    // Only allow numbers
+    this.value = this.value.replace(/[^0-9]/g, '');
+    
+    // Auto-submit when 6 digits are entered
+    if (this.value.length === 6) {
+      form.submit();
+    }
+  });
+  
+  // Auto-focus on page load
+  verificationInput.focus();
+});
+</script>

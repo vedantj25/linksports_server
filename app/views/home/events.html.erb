@@ -1,0 +1,132 @@
+<%# Events Page %>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="text-center mb-5">
+        <h1 class="display-4">Sports Events & Competitions</h1>
+        <p class="lead text-muted">Discover tournaments, training camps, and sports events near you</p>
+      </div>
+      
+      <div class="row g-4 mb-5">
+        <div class="col-lg-3 col-md-6">
+          <div class="card border-0 text-center p-3">
+            <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+            <h5>Tournaments</h5>
+            <p class="text-muted">Competitive tournaments across various sports disciplines</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card border-0 text-center p-3">
+            <i class="fas fa-dumbbell fa-3x text-success mb-3"></i>
+            <h5>Training Camps</h5>
+            <p class="text-muted">Skill development camps led by experienced coaches</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card border-0 text-center p-3">
+            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+            <h5>Tryouts</h5>
+            <p class="text-muted">Team selection and recruitment opportunities</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="card border-0 text-center p-3">
+            <i class="fas fa-calendar-check fa-3x text-info mb-3"></i>
+            <h5>Workshops</h5>
+            <p class="text-muted">Educational sessions and skill-building workshops</p>
+          </div>
+        </div>
+      </div>
+      
+      <% if user_signed_in? %>
+        <div class="search-section mb-5">
+          <div class="card">
+            <div class="card-body">
+              <h4>Find Events</h4>
+              <form class="row g-3">
+                <div class="col-md-3">
+                  <input type="text" class="form-control" placeholder="Search events...">
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option value="">All Sports</option>
+                    <% Sport.active.each do |sport| %>
+                      <option value="<%= sport.id %>"><%= sport.name %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <select class="form-select">
+                    <option value="">Event Type</option>
+                    <option value="tournament">Tournament</option>
+                    <option value="camp">Training Camp</option>
+                    <option value="tryout">Tryout</option>
+                    <option value="workshop">Workshop</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" placeholder="Location">
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">Search Events</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        
+        <div class="coming-soon-section">
+          <div class="alert alert-info text-center">
+            <i class="fas fa-rocket fa-2x mb-3"></i>
+            <h4>Events Feature Coming Soon!</h4>
+            <p class="mb-0">We're working on bringing you the best sports events and competitions. Stay tuned for updates!</p>
+          </div>
+          
+          <div class="row g-4 mt-4">
+            <div class="col-lg-4">
+              <div class="card border-warning">
+                <div class="card-body text-center">
+                  <i class="fas fa-bell fa-3x text-warning mb-3"></i>
+                  <h5>Get Notified</h5>
+                  <p class="text-muted">Be the first to know when events are posted in your area</p>
+                  <button class="btn btn-warning" disabled>Notify Me</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card border-success">
+                <div class="card-body text-center">
+                  <i class="fas fa-plus-circle fa-3x text-success mb-3"></i>
+                  <h5>Post Events</h5>
+                  <p class="text-muted">Coaches and clubs will be able to post their events</p>
+                  <button class="btn btn-success" disabled>Post Event</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="card border-primary">
+                <div class="card-body text-center">
+                  <i class="fas fa-calendar-plus fa-3x text-primary mb-3"></i>
+                  <h5>Register</h5>
+                  <p class="text-muted">Easy registration and payment for events</p>
+                  <button class="btn btn-primary" disabled>Register</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class="text-center py-5">
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Sign in to discover events</strong> and register for tournaments, camps, and competitions.
+          </div>
+          <div class="d-flex justify-content-center gap-3">
+            <%= link_to "Sign In", new_user_session_path, class: "btn btn-primary" %>
+            <%= link_to "Join Now", new_user_registration_path, class: "btn btn-outline-primary" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

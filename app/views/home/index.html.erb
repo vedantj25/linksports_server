@@ -1,0 +1,245 @@
+<%# Hero Section %>
+<section class="hero-section">
+  <div class="container">
+    <div class="row align-items-center min-vh-75">
+      <div class="col-lg-6">
+        <h1 class="hero-title">
+          Connect. Compete. <span class="text-warning">Achieve.</span>
+        </h1>
+        <p class="hero-subtitle">
+          India's premier sports networking platform connecting athletes, coaches, and clubs. 
+          Discover opportunities, showcase your talent, and build your sports career.
+        </p>
+        <div class="d-flex flex-column flex-md-row gap-3">
+          <%= link_to "Join Now", new_user_registration_path, class: "btn btn-light btn-lg" %>
+          <%= link_to "Explore Platform", "#features", class: "btn btn-outline-light btn-lg" %>
+        </div>
+        
+        <div class="row mt-5">
+          <div class="col-4">
+            <h3 class="h4 mb-1"><%= @total_users %>+</h3>
+            <small class="text-white-75">Active Users</small>
+          </div>
+          <div class="col-4">
+            <h3 class="h4 mb-1"><%= @total_sports %>+</h3>
+            <small class="text-white-75">Sports</small>
+          </div>
+          <div class="col-4">
+            <h3 class="h4 mb-1">1000+</h3>
+            <small class="text-white-75">Connections</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6 text-center">
+        <div class="position-relative">
+          <!-- You can add a hero image or illustration here -->
+          <div class="bg-white bg-opacity-10 rounded-4 p-5 backdrop-blur">
+            <i class="fas fa-users fa-5x text-warning mb-4"></i>
+            <h4 class="text-white">Build Your Sports Network</h4>
+            <p class="text-white-75">Connect with athletes, coaches, and clubs across India</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# Features Section %>
+<section id="features" class="py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="h1 mb-4">Why Choose LinkSports?</h2>
+        <p class="lead text-muted">
+          Everything you need to build your sports career and connect with the sports community
+        </p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 text-center p-4">
+          <i class="fas fa-user-circle fa-3x text-primary mb-3"></i>
+          <h4>Create Your Profile</h4>
+          <p class="text-muted">
+            Showcase your skills, achievements, and sports journey. Upload photos, videos, and build your sports portfolio.
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 text-center p-4">
+          <i class="fas fa-search fa-3x text-success mb-3"></i>
+          <h4>Discover Opportunities</h4>
+          <p class="text-muted">
+            Find tryouts, camps, tournaments, and training opportunities. Connect with coaches and clubs looking for talent.
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 text-center p-4">
+          <i class="fas fa-network-wired fa-3x text-warning mb-3"></i>
+          <h4>Build Your Network</h4>
+          <p class="text-muted">
+            Connect with athletes, coaches, and clubs. Share experiences, learn from others, and grow your sports network.
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 text-center p-4">
+          <i class="fas fa-calendar-alt fa-3x text-info mb-3"></i>
+          <h4>Events & Competitions</h4>
+          <p class="text-muted">
+            Discover and register for sports events, tournaments, training camps, and competitions near you.
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 text-center p-4">
+          <i class="fas fa-comments fa-3x text-danger mb-3"></i>
+          <h4>Direct Messaging</h4>
+          <p class="text-muted">
+            Connect directly with coaches, scouts, and fellow athletes. Build relationships that matter.
+          </p>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="card h-100 text-center p-4">
+          <i class="fas fa-trophy fa-3x text-primary mb-3"></i>
+          <h4>Showcase Achievements</h4>
+          <p class="text-muted">
+            Highlight your awards, certifications, and sports accomplishments. Let your achievements speak for you.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# Sports Categories Section %>
+<section class="bg-light py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="h1 mb-4">Featured Sports</h2>
+        <p class="lead text-muted">
+          Connect with athletes and coaches across various sports disciplines
+        </p>
+      </div>
+    </div>
+    
+    <div class="row g-3">
+      <% @featured_sports.each do |sport| %>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+          <div class="card border-0 text-center p-3">
+            <div class="category-<%= sport.category.downcase.gsub(' ', '-') %> mb-2">
+              <i class="fas fa-circle fa-2x"></i>
+            </div>
+            <h6 class="mb-1"><%= sport.name %></h6>
+            <small class="text-muted"><%= sport.category %></small>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <div class="text-center mt-4">
+      <%= link_to "View All Sports", "#", class: "btn btn-outline-primary" %>
+    </div>
+  </div>
+</section>
+
+<%# User Types Section %>
+<section class="py-5">
+  <div class="container">
+    <div class="row text-center mb-5">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="h1 mb-4">Join as</h2>
+        <p class="lead text-muted">
+          Choose your role and start building your sports network today
+        </p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card h-100 border-primary">
+          <div class="card-body text-center p-5">
+            <i class="fas fa-running fa-4x text-primary mb-4"></i>
+            <h3>Athlete</h3>
+            <p class="text-muted mb-4">
+              Showcase your skills, connect with coaches, find opportunities, and build your sports career.
+            </p>
+            <ul class="list-unstyled text-start">
+              <li><i class="fas fa-check text-success me-2"></i> Create detailed sports profile</li>
+              <li><i class="fas fa-check text-success me-2"></i> Upload photos and videos</li>
+              <li><i class="fas fa-check text-success me-2"></i> Connect with coaches and scouts</li>
+              <li><i class="fas fa-check text-success me-2"></i> Find tryouts and opportunities</li>
+            </ul>
+            <%= link_to "Join as Athlete", new_user_registration_path(user_type: 'player'), class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card h-100 border-success">
+          <div class="card-body text-center p-5">
+            <i class="fas fa-chalkboard-teacher fa-4x text-success mb-4"></i>
+            <h3>Coach</h3>
+            <p class="text-muted mb-4">
+              Find talented athletes, showcase your expertise, and grow your coaching career.
+            </p>
+            <ul class="list-unstyled text-start">
+              <li><i class="fas fa-check text-success me-2"></i> Display coaching credentials</li>
+              <li><i class="fas fa-check text-success me-2"></i> Find and recruit players</li>
+              <li><i class="fas fa-check text-success me-2"></i> Share coaching philosophy</li>
+              <li><i class="fas fa-check text-success me-2"></i> Post training opportunities</li>
+            </ul>
+            <%= link_to "Join as Coach", new_user_registration_path(user_type: 'coach'), class: "btn btn-success" %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card h-100 border-warning">
+          <div class="card-body text-center p-5">
+            <i class="fas fa-building fa-4x text-warning mb-4"></i>
+            <h3>Club/Academy</h3>
+            <p class="text-muted mb-4">
+              Promote your institution, recruit talent, and connect with the sports community.
+            </p>
+            <ul class="list-unstyled text-start">
+              <li><i class="fas fa-check text-success me-2"></i> Showcase facilities and programs</li>
+              <li><i class="fas fa-check text-success me-2"></i> Post recruitment opportunities</li>
+              <li><i class="fas fa-check text-success me-2"></i> Connect with athletes and coaches</li>
+              <li><i class="fas fa-check text-success me-2"></i> Organize events and tryouts</li>
+            </ul>
+            <%= link_to "Join as Club", new_user_registration_path(user_type: 'club'), class: "btn btn-warning" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%# CTA Section %>
+<section class="bg-primary text-white py-5">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-lg-8 mx-auto">
+        <h2 class="h1 mb-4">Ready to Start Your Sports Journey?</h2>
+        <p class="lead mb-4">
+          Join thousands of athletes, coaches, and clubs who are already building their sports careers on LinkSports.
+        </p>
+        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+          <%= link_to "Create Account", new_user_registration_path, class: "btn btn-light btn-lg" %>
+          <%= link_to "Learn More", "#", class: "btn btn-outline-light btn-lg" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,96 @@
+<!-- Coach-specific details -->
+<% if profile.is_a?(CoachProfile) %>
+  <!-- Experience & Rates -->
+  <% if profile.experience_years.present? || profile.hourly_rate.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-briefcase me-2"></i>Experience & Rates
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% if profile.experience_years.present? %>
+            <div class="col-md-6 mb-3">
+              <div class="stat-item text-center">
+                <h4 class="text-primary mb-1"><%= pluralize(profile.experience_years, 'Year') %></h4>
+                <small class="text-muted">Coaching Experience</small>
+              </div>
+            </div>
+          <% end %>
+          <% if profile.hourly_rate.present? %>
+            <div class="col-md-6 mb-3">
+              <div class="stat-item text-center">
+                <h4 class="text-success mb-1">
+                  <%= profile.currency || 'INR' %> <%= profile.hourly_rate %>
+                </h4>
+                <small class="text-muted">Per Hour</small>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Certifications -->
+  <% if profile.certifications_list.any? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-certificate me-2"></i>Certifications
+        </h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <% profile.certifications_list.each do |certification| %>
+            <li class="mb-2">
+              <i class="fas fa-award me-2 text-primary"></i>
+              <%= certification %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Coaching History -->
+  <% if profile.coaching_history_list.any? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-history me-2"></i>Coaching History
+        </h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <% profile.coaching_history_list.each do |history| %>
+            <li class="mb-2">
+              <i class="fas fa-users me-2 text-info"></i>
+              <%= history %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Book Coaching Session CTA -->
+  <div class="card mb-4">
+    <div class="card-body text-center">
+      <h6 class="mb-3">Interested in coaching sessions?</h6>
+      <% if @is_own_profile %>
+        <p class="text-muted">This is how visitors will contact you for coaching sessions.</p>
+      <% else %>
+        <button class="btn btn-success btn-lg">
+          <i class="fas fa-calendar-plus me-2"></i>Book a Session
+        </button>
+        <p class="text-muted mt-2 small">
+          <% if profile.hourly_rate.present? %>
+            Starting from <%= profile.currency || 'INR' %> <%= profile.hourly_rate %>/hour
+          <% end %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+<% end %>

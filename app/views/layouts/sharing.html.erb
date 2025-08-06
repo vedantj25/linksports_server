@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= @meta_title || content_for(:title) || "LinkSports - India's Premier Sports Networking Platform" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="<%= @meta_description || "Connect with India's sports community on LinkSports" %>">
+    <meta name="keywords" content="sports, networking, athletes, coaches, clubs, India, <%= @profile&.user&.user_type %>, <%= @user_sports&.map(&:sport)&.map(&:name)&.join(', ') %>">
+    <meta name="author" content="LinkSports">
+    <link rel="canonical" href="<%= @canonical_url || request.original_url %>">
+
+    <!-- Open Graph Meta Tags (Facebook, LinkedIn) -->
+    <meta property="og:title" content="<%= @meta_title %>">
+    <meta property="og:description" content="<%= @meta_description %>">
+    <meta property="og:image" content="<%= @meta_image %>">
+    <meta property="og:url" content="<%= @canonical_url %>">
+    <meta property="og:type" content="profile">
+    <meta property="og:site_name" content="LinkSports">
+    <meta property="og:locale" content="en_IN">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= @meta_title %>">
+    <meta name="twitter:description" content="<%= @meta_description %>">
+    <meta name="twitter:image" content="<%= @meta_image %>">
+    <meta name="twitter:site" content="@LinkSportsApp">
+    <meta name="twitter:creator" content="@LinkSportsApp">
+    
+    <!-- WhatsApp specific -->
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Profile specific meta -->
+    <% if @profile %>
+      <meta property="profile:first_name" content="<%= @profile.first_name %>">
+      <meta property="profile:last_name" content="<%= @profile.last_name %>">
+      <meta property="profile:username" content="<%= @profile.display_name %>">
+    <% end %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+    
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@hotwired/stimulus@3.2.2/dist/stimulus.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <%= render "shared/navbar" %>
+    
+    <main>
+      <%= render "shared/flash_messages" %>
+      <%= yield %>
+    </main>
+
+    <%= render "shared/footer" %>
+    
+    <!-- Sharing functionality script -->
+    <script>
+      function shareProfile(url, title) {
+        if (navigator.share) {
+          navigator.share({
+            title: title,
+            url: url
+          }).catch(console.error);
+        } else {
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(url).then(() => {
+            alert('Profile link copied to clipboard!');
+          }).catch(() => {
+            // Final fallback: show URL in prompt
+            prompt('Copy this link:', url);
+          });
+        }
+      }
+      
+      function shareToWhatsApp(url, text) {
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+        window.open(whatsappUrl, '_blank');
+      }
+      
+      function shareToTwitter(url, text) {
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        window.open(twitterUrl, '_blank');
+      }
+      
+      function shareToLinkedIn(url) {
+        const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        window.open(linkedinUrl, '_blank');
+      }
+      
+      function shareToFacebook(url) {
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        window.open(facebookUrl, '_blank');
+      }
+    </script>
+  </body>
+</html>

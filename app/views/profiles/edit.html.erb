@@ -1,0 +1,201 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+              <i class="fas fa-edit me-2"></i>Edit Profile
+            </h4>
+            <div class="text-muted">
+              <small>Profile Completion: <%= profile_completion_percentage(@profile) %>%</small>
+              <div class="progress mt-1" style="width: 100px; height: 6px;">
+                <div class="progress-bar" role="progressbar" style="width: <%= profile_completion_percentage(@profile) %>%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= form_with model: @profile, url: profile_path(@profile), method: :patch, local: true, 
+                       html: { multipart: true, class: "needs-validation", novalidate: true } do |form| %>
+            <% if @profile.errors.any? %>
+              <div class="alert alert-danger mb-4">
+                <h6><%= pluralize(@profile.errors.count, "error") %> prohibited this profile from being saved:</h6>
+                <ul class="mb-0">
+                  <% @profile.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <!-- Profile Image Upload -->
+            <div class="row mb-4">
+              <div class="col-md-3 text-center">
+                <div class="profile-avatar mb-3">
+                  <%= profile_avatar(@profile, size: 120) %>
+                </div>
+                <div class="mb-3">
+                  <%= form.file_field :profile_image, class: "form-control form-control-sm", accept: "image/*" %>
+                  <div class="form-text">Upload a profile picture</div>
+                </div>
+              </div>
+              <div class="col-md-9">
+                <!-- Basic Info -->
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <%= form.text_field :first_name, class: "form-control", placeholder: "First Name", required: true %>
+                      <%= form.label :first_name %>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <%= form.text_field :last_name, class: "form-control", placeholder: "Last Name" %>
+                      <%= form.label :last_name %>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <div class="form-floating">
+                    <%= form.text_field :display_name, class: "form-control", placeholder: "Display Name" %>
+                    <%= form.label :display_name %>
+                    <div class="form-text">How you want to be known on LinkSports (optional)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic-info" type="button" role="tab">
+                  <i class="fas fa-user me-2"></i>Basic Info
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sports-tab" data-bs-toggle="tab" data-bs-target="#sports-info" type="button" role="tab">
+                  <i class="fas fa-football-ball me-2"></i>Sports
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details-info" type="button" role="tab">
+                  <i class="fas fa-info-circle me-2"></i><%= @profile.user.user_type.titleize %> Details
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="social-tab" data-bs-toggle="tab" data-bs-target="#social-info" type="button" role="tab">
+                  <i class="fas fa-share-alt me-2"></i>Social Links
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="profileTabsContent">
+              <!-- Basic Info Tab -->
+              <div class="tab-pane fade show active" id="basic-info" role="tabpanel">
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <div class="form-floating">
+                      <%= form.text_area :bio, class: "form-control", placeholder: "Bio", rows: 4, style: "height: 120px;" %>
+                      <%= form.label :bio %>
+                      <div class="form-text">Tell others about yourself, your passion for sports, and what you're looking for</div>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4 mb-3">
+                    <div class="form-floating">
+                      <%= form.date_field :date_of_birth, class: "form-control", placeholder: "Date of Birth" %>
+                      <%= form.label :date_of_birth %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4 mb-3">
+                    <div class="form-floating">
+                      <%= form.select :gender, options_for_select([
+                        ['Select Gender', ''],
+                        ['Male', 'male'],
+                        ['Female', 'female'],
+                        ['Other', 'other'],
+                        ['Prefer not to say', 'prefer_not_to_say']
+                      ], @profile.gender), {}, { class: "form-select" } %>
+                      <%= form.label :gender %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-4 mb-3">
+                    <div class="form-floating">
+                      <%= form.text_field :location_city, class: "form-control", placeholder: "City" %>
+                      <%= form.label :location_city %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <%= form.text_field :location_state, class: "form-control", placeholder: "State" %>
+                      <%= form.label :location_state %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <%= form.text_field :location_country, class: "form-control", placeholder: "Country", value: @profile.location_country || "India" %>
+                      <%= form.label :location_country %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sports Tab -->
+              <div class="tab-pane fade" id="sports-info" role="tabpanel">
+                <%= render "profiles/sports_form", form: form, sports: @sports, user_sports: @user_sports %>
+              </div>
+
+              <!-- Details Tab -->
+              <div class="tab-pane fade" id="details-info" role="tabpanel">
+                <%= render "profiles/#{@profile.user.user_type}_form", form: form %>
+              </div>
+
+              <!-- Social Links Tab -->
+              <div class="tab-pane fade" id="social-info" role="tabpanel">
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <div class="form-floating">
+                      <%= form.url_field :website_url, class: "form-control", placeholder: "Website URL" %>
+                      <%= form.label :website_url %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <%= form.url_field :instagram_url, class: "form-control", placeholder: "Instagram URL" %>
+                      <%= form.label :instagram_url %>
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                      <%= form.url_field :youtube_url, class: "form-control", placeholder: "YouTube URL" %>
+                      <%= form.label :youtube_url %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-between mt-4">
+                                  <%= link_to "Cancel", profile_path(@profile), class: "btn btn-outline-secondary" %>
+              <div>
+                <% unless @profile.user.profile_completed? %>
+                  <%= form.submit "Complete Setup", class: "btn btn-success me-2", name: "complete_setup", value: "true" %>
+                <% end %>
+                <%= form.submit "Save Changes", class: "btn btn-primary" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

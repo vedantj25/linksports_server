@@ -1,0 +1,168 @@
+<!-- Player-specific form fields -->
+<div class="player-details">
+  <h6 class="mb-4">Player Details</h6>
+  
+  <!-- Physical Stats -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h6 class="text-muted mb-3">Physical Stats</h6>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= form.number_field :height_cm, class: "form-control", placeholder: "Height (cm)", min: 100, max: 250 %>
+        <%= form.label :height_cm, "Height (cm)" %>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= form.number_field :weight_kg, class: "form-control", placeholder: "Weight (kg)", min: 30, max: 200 %>
+        <%= form.label :weight_kg, "Weight (kg)" %>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= form.select :preferred_foot, options_for_select([
+          ['Select Preferred Foot', ''],
+          ['Left', 'left'],
+          ['Right', 'right'],
+          ['Both', 'both']
+        ], @profile.preferred_foot), {}, { class: "form-select" } %>
+        <%= form.label :preferred_foot %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Status & Availability -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h6 class="text-muted mb-3">Status & Availability</h6>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= form.select :playing_status, options_for_select([
+          ['Select Playing Status', ''],
+          ['Amateur', 'amateur'],
+          ['Semi-Professional', 'semi_professional'],
+          ['Professional', 'professional']
+        ], @profile.playing_status), {}, { class: "form-select" } %>
+        <%= form.label :playing_status %>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= form.select :availability, options_for_select([
+          ['Select Availability', ''],
+          ['Available', 'available'],
+          ['Busy', 'busy'],
+          ['Not Available', 'not_available']
+        ], @profile.availability), {}, { class: "form-select" } %>
+        <%= form.label :availability %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Achievements -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Achievements</h6>
+    <div id="achievements-container">
+      <% if @profile.achievements_list.any? %>
+        <% @profile.achievements_list.each_with_index do |achievement, index| %>
+          <div class="achievement-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="player_profile[achievements][]" class="form-control" 
+                     placeholder="Achievement" value="<%= achievement %>">
+              <button type="button" class="btn btn-outline-danger remove-achievement">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-achievement">
+      <i class="fas fa-plus me-2"></i>Add Achievement
+    </button>
+    <div class="form-text">Add your sports achievements, awards, or recognition</div>
+  </div>
+  
+  <!-- Training History -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Training History</h6>
+    <div id="training-container">
+      <% if @profile.training_history_list.any? %>
+        <% @profile.training_history_list.each_with_index do |training, index| %>
+          <div class="training-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="player_profile[training_history][]" class="form-control" 
+                     placeholder="Training/Academy" value="<%= training %>">
+              <button type="button" class="btn btn-outline-danger remove-training">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-training">
+      <i class="fas fa-plus me-2"></i>Add Training
+    </button>
+    <div class="form-text">Add academies, clubs, or training programs you've been part of</div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Achievements management
+  const addAchievementBtn = document.getElementById('add-achievement');
+  const achievementsContainer = document.getElementById('achievements-container');
+  
+  addAchievementBtn.addEventListener('click', function() {
+    const achievementEntry = document.createElement('div');
+    achievementEntry.className = 'achievement-entry mb-2';
+    achievementEntry.innerHTML = `
+      <div class="input-group">
+        <input type="text" name="player_profile[achievements][]" class="form-control" placeholder="Achievement">
+        <button type="button" class="btn btn-outline-danger remove-achievement">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    achievementsContainer.appendChild(achievementEntry);
+  });
+  
+  achievementsContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-achievement')) {
+      e.target.closest('.achievement-entry').remove();
+    }
+  });
+  
+  // Training history management
+  const addTrainingBtn = document.getElementById('add-training');
+  const trainingContainer = document.getElementById('training-container');
+  
+  addTrainingBtn.addEventListener('click', function() {
+    const trainingEntry = document.createElement('div');
+    trainingEntry.className = 'training-entry mb-2';
+    trainingEntry.innerHTML = `
+      <div class="input-group">
+        <input type="text" name="player_profile[training_history][]" class="form-control" placeholder="Training/Academy">
+        <button type="button" class="btn btn-outline-danger remove-training">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    trainingContainer.appendChild(trainingEntry);
+  });
+  
+  trainingContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-training')) {
+      e.target.closest('.training-entry').remove();
+    }
+  });
+});
+</script>

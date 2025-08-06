@@ -1,0 +1,164 @@
+<!-- Club-specific form fields -->
+<div class="club-details">
+  <h6 class="mb-4">Club Details</h6>
+  
+  <!-- Club Information -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h6 class="text-muted mb-3">Club Information</h6>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= form.text_field :club_name, class: "form-control", placeholder: "Club Name", required: true %>
+        <%= form.label :club_name %>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= form.select :club_type, options_for_select([
+          ['Select Club Type', ''],
+          ['Academy', 'academy'],
+          ['Club', 'club'],
+          ['Training Center', 'training_center'],
+          ['School', 'school']
+        ], @profile.club_type), {}, { class: "form-select" } %>
+        <%= form.label :club_type %>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= form.number_field :establishment_year, class: "form-control", placeholder: "Year", 
+                             min: 1800, max: Date.current.year %>
+        <%= form.label :establishment_year %>
+      </div>
+    </div>
+    
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= form.email_field :contact_email, class: "form-control", placeholder: "Contact Email" %>
+        <%= form.label :contact_email %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Facilities -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Facilities</h6>
+    <div id="facilities-container">
+      <% if @profile.facilities_list.any? %>
+        <% @profile.facilities_list.each_with_index do |facility, index| %>
+          <div class="facility-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="club_profile[facilities][]" class="form-control" 
+                     placeholder="Facility" value="<%= facility %>">
+              <button type="button" class="btn btn-outline-danger remove-facility">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-facility">
+      <i class="fas fa-plus me-2"></i>Add Facility
+    </button>
+    <div class="form-text">Add facilities like football field, basketball court, gym, etc.</div>
+  </div>
+  
+  <!-- Programs Offered -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Programs Offered</h6>
+    <div id="programs-container">
+      <% if @profile.programs_offered_list.any? %>
+        <% @profile.programs_offered_list.each_with_index do |program, index| %>
+          <div class="program-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="club_profile[programs_offered][]" class="form-control" 
+                     placeholder="Program" value="<%= program %>">
+              <button type="button" class="btn btn-outline-danger remove-program">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-program">
+      <i class="fas fa-plus me-2"></i>Add Program
+    </button>
+    <div class="form-text">Add training programs, courses, or memberships you offer</div>
+  </div>
+  
+  <!-- Club Description -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Club Description</h6>
+    <div class="alert alert-info">
+      <small>
+        <strong>Tip:</strong> Use the bio section in the Basic Info tab to describe your club's mission, 
+        values, training philosophy, and what makes your club special. Include information about:
+      </small>
+      <ul class="small mb-0 mt-2">
+        <li>Club's history and achievements</li>
+        <li>Training methodology and approach</li>
+        <li>Age groups and skill levels you cater to</li>
+        <li>Membership benefits and opportunities</li>
+        <li>Competition and tournament participation</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Facilities management
+  const addFacilityBtn = document.getElementById('add-facility');
+  const facilitiesContainer = document.getElementById('facilities-container');
+  
+  addFacilityBtn.addEventListener('click', function() {
+    const facilityEntry = document.createElement('div');
+    facilityEntry.className = 'facility-entry mb-2';
+    facilityEntry.innerHTML = `
+      <div class="input-group">
+        <input type="text" name="club_profile[facilities][]" class="form-control" placeholder="Facility">
+        <button type="button" class="btn btn-outline-danger remove-facility">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    facilitiesContainer.appendChild(facilityEntry);
+  });
+  
+  facilitiesContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-facility')) {
+      e.target.closest('.facility-entry').remove();
+    }
+  });
+  
+  // Programs management
+  const addProgramBtn = document.getElementById('add-program');
+  const programsContainer = document.getElementById('programs-container');
+  
+  addProgramBtn.addEventListener('click', function() {
+    const programEntry = document.createElement('div');
+    programEntry.className = 'program-entry mb-2';
+    programEntry.innerHTML = `
+      <div class="input-group">
+        <input type="text" name="club_profile[programs_offered][]" class="form-control" placeholder="Program">
+        <button type="button" class="btn btn-outline-danger remove-program">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    programsContainer.appendChild(programEntry);
+  });
+  
+  programsContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-program')) {
+      e.target.closest('.program-entry').remove();
+    }
+  });
+});
+</script>

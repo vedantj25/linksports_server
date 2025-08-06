@@ -1,0 +1,112 @@
+<!-- Player-specific details -->
+<% if profile.is_a?(PlayerProfile) %>
+  <!-- Physical Stats -->
+  <% if profile.height_cm.present? || profile.weight_kg.present? || profile.preferred_foot.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-ruler-vertical me-2"></i>Physical Stats
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% if profile.height_cm.present? %>
+            <div class="col-md-4 mb-3">
+              <div class="stat-item text-center">
+                <h4 class="text-primary mb-1"><%= profile.height_cm %> cm</h4>
+                <small class="text-muted">Height</small>
+              </div>
+            </div>
+          <% end %>
+          <% if profile.weight_kg.present? %>
+            <div class="col-md-4 mb-3">
+              <div class="stat-item text-center">
+                <h4 class="text-primary mb-1"><%= profile.weight_kg %> kg</h4>
+                <small class="text-muted">Weight</small>
+              </div>
+            </div>
+          <% end %>
+          <% if profile.preferred_foot.present? %>
+            <div class="col-md-4 mb-3">
+              <div class="stat-item text-center">
+                <h4 class="text-primary mb-1"><%= profile.preferred_foot.titleize %></h4>
+                <small class="text-muted">Preferred Foot</small>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Status & Availability -->
+  <% if profile.playing_status.present? || profile.availability.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-calendar-check me-2"></i>Status & Availability
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% if profile.playing_status.present? %>
+            <div class="col-md-6 mb-3">
+              <p class="mb-1"><strong>Playing Status</strong></p>
+              <span class="badge bg-info"><%= profile.playing_status.titleize %></span>
+            </div>
+          <% end %>
+          <% if profile.availability.present? %>
+            <div class="col-md-6 mb-3">
+              <p class="mb-1"><strong>Availability</strong></p>
+              <span class="badge bg-<%= profile.availability == 'available' ? 'success' : 'warning' %>">
+                <%= profile.availability.titleize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Achievements -->
+  <% if profile.achievements_list.any? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-trophy me-2"></i>Achievements
+        </h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <% profile.achievements_list.each do |achievement| %>
+            <li class="mb-2">
+              <i class="fas fa-medal me-2 text-warning"></i>
+              <%= achievement %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Training History -->
+  <% if profile.training_history_list.any? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-dumbbell me-2"></i>Training History
+        </h5>
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled">
+          <% profile.training_history_list.each do |training| %>
+            <li class="mb-2">
+              <i class="fas fa-graduation-cap me-2 text-info"></i>
+              <%= training %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+<% end %>

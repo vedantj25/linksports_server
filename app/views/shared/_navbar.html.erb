@@ -1,0 +1,65 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+  <div class="container">
+    <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
+      <i class="fas fa-trophy me-2 text-primary-custom"></i>
+      <strong>LinkSports</strong>
+    <% end %>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <%= link_to "Home", root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Discover", discover_path, class: "nav-link #{'active' if current_page?(discover_path)}" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Events", events_path, class: "nav-link #{'active' if current_page?(events_path)}" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "About", about_path, class: "nav-link #{'active' if current_page?(about_path)}" %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Contact", contact_path, class: "nav-link #{'active' if current_page?(contact_path)}" %>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav">
+        <% if user_signed_in? %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-circle me-2"></i>
+              <%= current_user.display_name %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><%= link_to profile_path(current_user.profile), class: "dropdown-item" do %>
+                <i class="fas fa-user me-2"></i>My Profile
+              <% end %></li>
+              <li><%= link_to edit_profile_path(current_user.profile), class: "dropdown-item" do %>
+                <i class="fas fa-edit me-2"></i>Edit Profile
+              <% end %></li>
+              <li><%= link_to "#", class: "dropdown-item" do %>
+                <i class="fas fa-cog me-2"></i>Settings
+              <% end %></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item", form: { style: "display: inline;" } do %>
+                <i class="fas fa-sign-out-alt me-2"></i>Sign Out
+              <% end %></li>
+            </ul>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Join Now", new_user_registration_path, class: "btn btn-primary ms-2" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>

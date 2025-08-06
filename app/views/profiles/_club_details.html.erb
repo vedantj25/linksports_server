@@ -1,0 +1,109 @@
+<!-- Club-specific details -->
+<% if profile.is_a?(ClubProfile) %>
+  <!-- Club Info -->
+  <% if profile.club_name.present? || profile.establishment_year.present? || profile.club_type.present? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-building me-2"></i>Club Information
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if profile.club_name.present? %>
+          <div class="mb-3">
+            <strong class="text-primary h5"><%= profile.club_name %></strong>
+          </div>
+        <% end %>
+        
+        <div class="row">
+          <% if profile.club_type.present? %>
+            <div class="col-md-6 mb-3">
+              <p class="mb-1"><strong>Type</strong></p>
+              <span class="badge bg-info"><%= profile.club_type.titleize %></span>
+            </div>
+          <% end %>
+          <% if profile.establishment_year.present? %>
+            <div class="col-md-6 mb-3">
+              <p class="mb-1"><strong>Established</strong></p>
+              <span class="text-muted"><%= profile.establishment_year %></span>
+            </div>
+          <% end %>
+        </div>
+        
+        <% if profile.contact_email.present? %>
+          <div class="mt-3">
+            <p class="mb-1"><strong>Contact Email</strong></p>
+            <a href="mailto:<%= profile.contact_email %>" class="text-decoration-none">
+              <i class="fas fa-envelope me-2"></i><%= profile.contact_email %>
+            </a>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Facilities -->
+  <% if profile.facilities_list.any? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-dumbbell me-2"></i>Facilities
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% profile.facilities_list.each do |facility| %>
+            <div class="col-md-6 mb-2">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-2 text-success"></i>
+                <%= facility %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Programs Offered -->
+  <% if profile.programs_offered_list.any? %>
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-graduation-cap me-2"></i>Programs Offered
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <% profile.programs_offered_list.each do |program| %>
+            <div class="col-md-6 mb-2">
+              <div class="program-item p-2 border rounded">
+                <i class="fas fa-play-circle me-2 text-primary"></i>
+                <%= program %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Join Club CTA -->
+  <div class="card mb-4">
+    <div class="card-body text-center">
+      <h6 class="mb-3">Interested in joining <%= profile.club_name || 'this club' %>?</h6>
+      <% if @is_own_profile %>
+        <p class="text-muted">This is how visitors will contact your club for membership.</p>
+      <% else %>
+        <button class="btn btn-primary btn-lg">
+          <i class="fas fa-user-plus me-2"></i>Inquire About Membership
+        </button>
+        <% if profile.contact_email.present? %>
+          <p class="text-muted mt-2 small">
+            Or email us at <a href="mailto:<%= profile.contact_email %>"><%= profile.contact_email %></a>
+          </p>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

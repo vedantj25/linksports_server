@@ -1,0 +1,120 @@
+<div class="container-fluid bg-light min-vh-100 d-flex align-items-center">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <!-- Logo and Header -->
+            <div class="text-center mb-4">
+              <h3 class="fw-bold text-primary">
+                <i class="fas fa-trophy me-2"></i>
+                Join LinkSports
+              </h3>
+              <p class="text-muted">Connect with India's sports community</p>
+            </div>
+
+            <%= form_for(resource, as: resource_name, url: registration_path(resource_name), local: true, html: { class: "needs-validation", novalidate: true }) do |f| %>
+              <%= render "devise/shared/error_messages", resource: resource %>
+
+              <!-- User Type Selection -->
+              <div class="mb-4">
+                <label class="form-label fw-bold">I am a:</label>
+                <div class="row g-2">
+                  <div class="col-4">
+                    <input type="radio" class="btn-check" name="user[user_type]" id="player" value="player" checked>
+                    <label class="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" for="player">
+                      <i class="fas fa-running fs-4 mb-2"></i>
+                      <span>Player</span>
+                    </label>
+                  </div>
+                  <div class="col-4">
+                    <input type="radio" class="btn-check" name="user[user_type]" id="coach" value="coach">
+                    <label class="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" for="coach">
+                      <i class="fas fa-chalkboard-teacher fs-4 mb-2"></i>
+                      <span>Coach</span>
+                    </label>
+                  </div>
+                  <div class="col-4">
+                    <input type="radio" class="btn-check" name="user[user_type]" id="club" value="club">
+                    <label class="btn btn-outline-primary w-100 d-flex flex-column align-items-center py-3" for="club">
+                      <i class="fas fa-building fs-4 mb-2"></i>
+                      <span>Club</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Name Fields -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <%= f.text_field :first_name, class: "form-control", placeholder: "First Name", required: true %>
+                    <%= f.label :first_name %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <%= f.text_field :last_name, class: "form-control", placeholder: "Last Name" %>
+                    <%= f.label :last_name %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone Number -->
+              <div class="mb-3">
+                <div class="form-floating">
+                  <%= f.telephone_field :phone, class: "form-control", placeholder: "Phone Number", required: true %>
+                  <%= f.label :phone %>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Primary method for login and verification
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email (Optional) -->
+              <div class="mb-3">
+                <div class="form-floating">
+                  <%= f.email_field :email, class: "form-control", placeholder: "Email Address" %>
+                  <%= f.label :email %>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Optional - for notifications and recovery
+                  </div>
+                </div>
+              </div>
+
+              <!-- Password Fields (Hidden - will be auto-generated) -->
+              <%= f.hidden_field :password %>
+              <%= f.hidden_field :password_confirmation %>
+
+              <!-- Terms and Conditions -->
+              <div class="mb-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="terms" required>
+                  <label class="form-check-label" for="terms">
+                    I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <div class="d-grid mb-3">
+                <%= f.submit "Create Account", class: "btn btn-primary btn-lg" %>
+              </div>
+            <% end %>
+
+            <!-- Divider -->
+            <div class="text-center">
+              <hr class="my-4">
+              <p class="text-muted">
+                Already have an account? 
+                <%= link_to "Sign In", new_user_session_path, class: "text-primary fw-bold text-decoration-none" %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

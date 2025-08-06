@@ -1,0 +1,124 @@
+// LinkSports Application Styles
+
+// Import Bootstrap
+@import "bootstrap";
+
+// Custom Variables
+:root {
+  --primary-color: #1e40af;
+  --secondary-color: #64748b;
+  --success-color: #059669;
+  --warning-color: #d97706;
+  --danger-color: #dc2626;
+  --sport-orange: #ea580c;
+  --sport-green: #16a34a;
+}
+
+// Custom Styles
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+}
+
+// Header Styles
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color) !important;
+}
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// Hero Section
+.hero-section {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white;
+  padding: 5rem 0;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+// Cards
+.card {
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+// Buttons
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+}
+
+// Forms
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.25);
+}
+
+// Footer
+.footer {
+  background-color: #1f2937;
+  color: white;
+  padding: 3rem 0 1rem;
+}
+
+// Utility Classes
+.text-primary-custom {
+  color: var(--primary-color) !important;
+}
+
+.bg-primary-custom {
+  background-color: var(--primary-color) !important;
+}
+
+// Sports Category Colors
+.category-team-sports {
+  color: #dc2626;
+}
+
+.category-individual-sports {
+  color: #059669;
+}
+
+.category-racket-sports {
+  color: #d97706;
+}
+
+.category-water-sports {
+  color: #0ea5e9;
+}
+
+.category-combat-sports {
+  color: #7c3aed;
+}
+
+.category-other-sports {
+  color: #64748b;
+}

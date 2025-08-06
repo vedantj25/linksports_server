@@ -1,0 +1,151 @@
+<!-- Coach-specific form fields -->
+<div class="coach-details">
+  <h6 class="mb-4">Coach Details</h6>
+  
+  <!-- Experience & Rates -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h6 class="text-muted mb-3">Experience & Rates</h6>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= form.number_field :experience_years, class: "form-control", placeholder: "Years", min: 0, max: 50 %>
+        <%= form.label :experience_years, "Years of Experience" %>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= form.number_field :hourly_rate, class: "form-control", placeholder: "Rate", min: 0, step: 0.01 %>
+        <%= form.label :hourly_rate, "Hourly Rate" %>
+      </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= form.select :currency, options_for_select([
+          ['INR', 'INR'],
+          ['USD', 'USD'],
+          ['EUR', 'EUR']
+        ], @profile.currency || 'INR'), {}, { class: "form-select" } %>
+        <%= form.label :currency %>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Certifications -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Certifications</h6>
+    <div id="certifications-container">
+      <% if @profile.certifications_list.any? %>
+        <% @profile.certifications_list.each_with_index do |certification, index| %>
+          <div class="certification-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="coach_profile[certifications][]" class="form-control" 
+                     placeholder="Certification" value="<%= certification %>">
+              <button type="button" class="btn btn-outline-danger remove-certification">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-certification">
+      <i class="fas fa-plus me-2"></i>Add Certification
+    </button>
+    <div class="form-text">Add your coaching certifications, licenses, or qualifications</div>
+  </div>
+  
+  <!-- Coaching History -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Coaching History</h6>
+    <div id="coaching-history-container">
+      <% if @profile.coaching_history_list.any? %>
+        <% @profile.coaching_history_list.each_with_index do |history, index| %>
+          <div class="coaching-history-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="coach_profile[coaching_history][]" class="form-control" 
+                     placeholder="Coaching Experience" value="<%= history %>">
+              <button type="button" class="btn btn-outline-danger remove-coaching-history">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-coaching-history">
+      <i class="fas fa-plus me-2"></i>Add Experience
+    </button>
+    <div class="form-text">Add teams, clubs, or individuals you've coached</div>
+  </div>
+  
+  <!-- Coaching Philosophy -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Coaching Approach</h6>
+    <div class="form-text mb-2">
+      <i class="fas fa-info-circle me-2"></i>
+      This information will be included in your bio section to help potential students understand your coaching style.
+    </div>
+    <div class="alert alert-info">
+      <small>
+        <strong>Tip:</strong> Use the bio section in the Basic Info tab to describe your coaching philosophy, 
+        methodology, and what makes your coaching unique. This helps potential students choose the right coach for them.
+      </small>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Certifications management
+  const addCertificationBtn = document.getElementById('add-certification');
+  const certificationsContainer = document.getElementById('certifications-container');
+  
+  addCertificationBtn.addEventListener('click', function() {
+    const certificationEntry = document.createElement('div');
+    certificationEntry.className = 'certification-entry mb-2';
+    certificationEntry.innerHTML = `
+      <div class="input-group">
+        <input type="text" name="coach_profile[certifications][]" class="form-control" placeholder="Certification">
+        <button type="button" class="btn btn-outline-danger remove-certification">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    certificationsContainer.appendChild(certificationEntry);
+  });
+  
+  certificationsContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-certification')) {
+      e.target.closest('.certification-entry').remove();
+    }
+  });
+  
+  // Coaching history management
+  const addCoachingHistoryBtn = document.getElementById('add-coaching-history');
+  const coachingHistoryContainer = document.getElementById('coaching-history-container');
+  
+  addCoachingHistoryBtn.addEventListener('click', function() {
+    const coachingHistoryEntry = document.createElement('div');
+    coachingHistoryEntry.className = 'coaching-history-entry mb-2';
+    coachingHistoryEntry.innerHTML = `
+      <div class="input-group">
+        <input type="text" name="coach_profile[coaching_history][]" class="form-control" placeholder="Coaching Experience">
+        <button type="button" class="btn btn-outline-danger remove-coaching-history">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    coachingHistoryContainer.appendChild(coachingHistoryEntry);
+  });
+  
+  coachingHistoryContainer.addEventListener('click', function(e) {
+    if (e.target.closest('.remove-coaching-history')) {
+      e.target.closest('.coaching-history-entry').remove();
+    }
+  });
+});
+</script>

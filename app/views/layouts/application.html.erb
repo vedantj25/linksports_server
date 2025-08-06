@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "LinkSports - Connect, Compete, Achieve" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="<%= content_for(:description) || 'India\'s premier sports networking platform connecting athletes, coaches, and clubs.' %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
+    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <%# Includes all stylesheet files in app/assets/stylesheets %>
+    <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
+    
+    <!-- JavaScript -->
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body>
+    <header>
+      <%= render 'shared/navbar' %>
+    </header>
+
+    <main>
+      <%= render 'shared/flash_messages' if notice || alert %>
+      <%= yield %>
+    </main>
+
+    <footer>
+      <%= render 'shared/footer' %>
+    </footer>
+    
+    <!-- Sharing functionality script -->
+    <script>
+      function shareProfile(url, title) {
+        if (navigator.share) {
+          navigator.share({
+            title: title,
+            url: url
+          }).catch(console.error);
+        } else {
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(url).then(() => {
+            alert('Profile link copied to clipboard!');
+          }).catch(() => {
+            // Final fallback: show URL in prompt
+            prompt('Copy this link:', url);
+          });
+        }
+      }
+      
+      function shareToWhatsApp(url, text) {
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+        window.open(whatsappUrl, '_blank');
+      }
+      
+      function shareToTwitter(url, text) {
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+        window.open(twitterUrl, '_blank');
+      }
+      
+      function shareToLinkedIn(url) {
+        const linkedinUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        window.open(linkedinUrl, '_blank');
+      }
+      
+      function shareToFacebook(url) {
+        const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        window.open(facebookUrl, '_blank');
+      }
+    </script>
+  </body>
+</html>

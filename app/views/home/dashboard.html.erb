@@ -1,0 +1,216 @@
+<%# Dashboard for authenticated users %>
+<div class="container mt-4">
+  <div class="row">
+    <!-- Welcome Section -->
+    <div class="col-12 mb-4">
+      <div class="card bg-gradient-primary text-white">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h2 class="mb-2">Welcome back, <%= current_user.display_name %>! 👋</h2>
+              <p class="mb-0">Ready to connect with the sports community today?</p>
+            </div>
+            <div class="col-md-4 text-end">
+              <% if @user_profile&.profile_completed? %>
+                <i class="fas fa-check-circle fa-3x opacity-75"></i>
+              <% else %>
+                <div>
+                  <%= link_to "Complete Profile", edit_profile_path(@user_profile), class: "btn btn-light btn-sm" %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row g-4">
+    <!-- Quick Stats -->
+    <div class="col-lg-3 col-md-6">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-users fa-2x text-primary mb-3"></i>
+          <h4><%= @total_users %>+</h4>
+          <p class="text-muted mb-0">Total Users</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-basketball-ball fa-2x text-success mb-3"></i>
+          <h4><%= @total_sports %>+</h4>
+          <p class="text-muted mb-0">Sports Categories</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-handshake fa-2x text-warning mb-3"></i>
+          <h4>1000+</h4>
+          <p class="text-muted mb-0">Connections Made</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+      <div class="card text-center h-100">
+        <div class="card-body">
+          <i class="fas fa-trophy fa-2x text-info mb-3"></i>
+          <h4><%= @user_sports.count %></h4>
+          <p class="text-muted mb-0">Your Sports</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row mt-4">
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+        </div>
+        <div class="card-body">
+          <div class="d-grid gap-2">
+            <% if @user_profile %>
+              <%= link_to profile_path(@user_profile), class: "btn btn-outline-primary" do %>
+                <i class="fas fa-eye me-2"></i>View My Profile
+              <% end %>
+              <%= link_to edit_profile_path(@user_profile), class: "btn btn-outline-success" do %>
+                <i class="fas fa-edit me-2"></i>Edit Profile
+              <% end %>
+            <% end %>
+            <%= link_to discover_path, class: "btn btn-outline-info" do %>
+              <i class="fas fa-search me-2"></i>Discover People
+            <% end %>
+            <%= link_to events_path, class: "btn btn-outline-warning" do %>
+              <i class="fas fa-calendar me-2"></i>Find Events
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Profile Status -->
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-user-circle me-2"></i>Profile Status</h5>
+        </div>
+        <div class="card-body">
+          <% if @user_profile&.profile_completed? %>
+            <div class="alert alert-success">
+              <i class="fas fa-check-circle me-2"></i>
+              <strong>Profile Complete!</strong><br>
+              Your profile is ready to be discovered.
+            </div>
+            
+            <div class="mb-3">
+              <small class="text-muted">Profile Type:</small><br>
+              <span class="badge bg-primary"><%= current_user.user_type.humanize %></span>
+            </div>
+            
+            <% if @user_sports.any? %>
+              <div class="mb-3">
+                <small class="text-muted">Your Sports:</small><br>
+                <% @user_sports.each do |sport| %>
+                  <span class="badge bg-secondary me-1"><%= sport.name %></span>
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              <strong>Incomplete Profile</strong><br>
+              Complete your profile to get discovered.
+            </div>
+            <%= link_to "Complete Now", edit_profile_path(@user_profile), class: "btn btn-warning btn-sm" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Recent Activity / Suggestions -->
+    <div class="col-lg-4">
+      <div class="card h-100">
+        <div class="card-header">
+          <h5 class="mb-0"><i class="fas fa-star me-2"></i>Suggested Connections</h5>
+        </div>
+        <div class="card-body">
+          <% if @recent_profiles.any? %>
+            <% @recent_profiles.limit(3).each do |profile| %>
+              <div class="d-flex align-items-center mb-3">
+                <div class="me-3">
+                  <% if profile.user.avatar.attached? %>
+                    <%= image_tag profile.user.avatar, alt: profile.user.display_name, class: "rounded-circle", style: "width: 40px; height: 40px; object-fit: cover;" %>
+                  <% else %>
+                    <i class="fas fa-user-circle fa-2x text-muted"></i>
+                  <% end %>
+                </div>
+                <div class="flex-grow-1">
+                  <h6 class="mb-0"><%= profile.user.display_name %></h6>
+                  <small class="text-muted"><%= profile.user_type.humanize %></small>
+                </div>
+                <div>
+                  <%= link_to "View", profile_path(profile), class: "btn btn-outline-primary btn-sm" %>
+                </div>
+              </div>
+            <% end %>
+            <div class="text-center mt-3">
+              <%= link_to "Discover More", discover_path, class: "btn btn-primary btn-sm" %>
+            </div>
+          <% else %>
+            <div class="text-center text-muted">
+              <i class="fas fa-users fa-3x mb-3 opacity-50"></i>
+              <p>No profiles to show yet.</p>
+              <%= link_to "Explore", discover_path, class: "btn btn-primary btn-sm" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tips for New Users -->
+  <% unless @user_profile&.profile_completed? %>
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card border-info">
+          <div class="card-header bg-info text-white">
+            <h5 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Getting Started Tips</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="text-center">
+                  <i class="fas fa-user-edit fa-2x text-info mb-2"></i>
+                  <h6>Complete Your Profile</h6>
+                  <p class="text-muted small">Add your sports, achievements, and photos to get discovered</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <i class="fas fa-search fa-2x text-success mb-2"></i>
+                  <h6>Discover Others</h6>
+                  <p class="text-muted small">Explore profiles of athletes, coaches, and clubs</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="text-center">
+                  <i class="fas fa-comments fa-2x text-warning mb-2"></i>
+                  <h6>Start Connecting</h6>
+                  <p class="text-muted small">Reach out and build your sports network</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
