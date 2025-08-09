@@ -1,0 +1,35 @@
+databases:
+  - name: linksports-db-prod
+    plan: free
+    region: singapore
+    databaseName: kickthrowball
+    user: linkplayer
+
+services:
+  - type: web
+    name: linksports-web
+    runtime: ruby
+    buildCommand: bundle install && bundle exec rails assets:precompile
+    startCommand: bundle exec puma -C config/puma.rb
+    healthCheckPath: /up
+    autoDeploy: true
+    preDeployCommand: bundle exec rails db:migrate
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: linksports-db-prod
+          property: connectionString
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: APP_HOST
+        value: linksports-web.onrender.com
+      - key: SOLID_QUEUE_IN_PUMA
+        value: "true"
+# After first successful deploy, if you need to seed production data once:
+# Temporarily set `postDeployCommand: bundle exec rails db:migrate db:seed` or run a one-off shell.
+
