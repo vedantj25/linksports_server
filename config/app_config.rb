@@ -38,14 +38,14 @@ module AppConfig
 
   # Twilio (used by phone verification)
   def twilio_account_sid
-    Rails.application.credentials.dig(:twilio, :account_sid) || ENV["TWILIO_ACCOUNT_SID"]
+    ENV.fetch("TWILIO_ACCOUNT_SID", "1234567890")
   end
 
   def twilio_auth_token
-    Rails.application.credentials.dig(:twilio, :auth_token) || ENV["TWILIO_AUTH_TOKEN"]
+    ENV.fetch("TWILIO_AUTH_TOKEN", "1234567890")
   end
 
   def twilio_phone_number
-    Rails.application.credentials.dig(:twilio, :phone_number) || ENV["TWILIO_PHONE_NUMBER"]
+    ENV.fetch("TWILIO_PHONE_NUMBER", "+919876543210")
   end
 end
