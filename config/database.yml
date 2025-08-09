@@ -30,15 +30,3 @@ production:
     password: <%= ENV["DB_PASSWORD_PRODUCTION"] || ENV["DB_PASSWORD"] %>
     host: <%= ENV["DB_HOST_PRODUCTION"] || ENV["DB_HOST"] %>
     port: <%= Integer((ENV["DB_PORT_PRODUCTION"] || ENV["DB_PORT"] || 5432).to_i) %>
-  cache:
-    <<: *primary_production
-    database: <%= ENV.fetch("DB_NAME_PRODUCTION_CACHE", "#{ENV.fetch('DB_NAME_PRODUCTION', 'linksports_server_production')}_cache") %>
-    migrations_paths: db/cache_migrate
-  queue:
-    <<: *primary_production
-    database: <%= ENV.fetch("DB_NAME_PRODUCTION_QUEUE", "#{ENV.fetch('DB_NAME_PRODUCTION', 'linksports_server_production')}_queue") %>
-    migrations_paths: db/queue_migrate
-  cable:
-    <<: *primary_production
-    database: <%= ENV.fetch("DB_NAME_PRODUCTION_CABLE", "#{ENV.fetch('DB_NAME_PRODUCTION', 'linksports_server_production')}_cable") %>
-    migrations_paths: db/cable_migrate
