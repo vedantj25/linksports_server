@@ -10,7 +10,7 @@ services:
     name: linksports-web
     runtime: ruby
     buildCommand: bundle install && bundle exec rails assets:precompile
-    startCommand: bundle exec puma -C config/puma.rb
+    startCommand: bundle exec rails db:prepare && bundle exec puma -C config/puma.rb
     healthCheckPath: /up
     autoDeploy: true
     preDeployCommand: bundle exec rails db:migrate
@@ -31,5 +31,5 @@ services:
       - key: SOLID_QUEUE_IN_PUMA
         value: "true"
 # After first successful deploy, if you need to seed production data once:
-# Temporarily set `postDeployCommand: bundle exec rails db:migrate db:seed` or run a one-off shell.
+# Open the service Shell in Render and run: `bundle exec rails db:seed`
 
