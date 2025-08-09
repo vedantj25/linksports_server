@@ -22,11 +22,10 @@ test:
   database: <%= ENV.fetch("DB_NAME_TEST", "linksports_server_test") %>
 
 production:
-  primary: &primary_production
-    <<: *default
-    url: <%= ENV["DATABASE_URL_PRODUCTION"] || ENV["DATABASE_URL"] %>
-    database: <%= ENV.fetch("DB_NAME_PRODUCTION", "linksports_server_production") %>
-    username: <%= ENV["DB_USERNAME_PRODUCTION"] || ENV["DB_USERNAME"] %>
-    password: <%= ENV["DB_PASSWORD_PRODUCTION"] || ENV["DB_PASSWORD"] %>
-    host: <%= ENV["DB_HOST_PRODUCTION"] || ENV["DB_HOST"] %>
-    port: <%= Integer((ENV["DB_PORT_PRODUCTION"] || ENV["DB_PORT"] || 5432).to_i) %>
+  <<: *default
+  url: <%= ENV["DATABASE_URL_PRODUCTION"] || ENV["DATABASE_URL"] %>
+  database: <%= ENV.fetch("DB_NAME_PRODUCTION", "linksports_server_production") %>
+  username: <%= ENV["DB_USERNAME_PRODUCTION"] || ENV["DB_USERNAME"] %>
+  password: <%= ENV["DB_PASSWORD_PRODUCTION"] || ENV["DB_PASSWORD"] %>
+  host: <%= ENV["DB_HOST_PRODUCTION"] || ENV["DB_HOST"] %>
+  port: <%= Integer((ENV["DB_PORT_PRODUCTION"] || ENV["DB_PORT"] || 5432).to_i) %>
