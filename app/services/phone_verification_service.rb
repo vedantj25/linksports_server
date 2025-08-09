@@ -3,9 +3,9 @@ require "ostruct"
 
 class PhoneVerificationService
   def initialize
-    @account_sid = Rails.application.credentials.dig(:twilio, :account_sid) || ENV["TWILIO_ACCOUNT_SID"]
-    @auth_token = Rails.application.credentials.dig(:twilio, :auth_token) || ENV["TWILIO_AUTH_TOKEN"]
-    @phone_number = Rails.application.credentials.dig(:twilio, :phone_number) || ENV["TWILIO_PHONE_NUMBER"]
+    @account_sid = AppConfig.twilio_account_sid
+    @auth_token = AppConfig.twilio_auth_token
+    @phone_number = AppConfig.twilio_phone_number
 
     @client = Twilio::REST::Client.new(@account_sid, @auth_token)
   end
