@@ -11,12 +11,11 @@ class Profile < ApplicationRecord
   validates :website_url, :instagram_url, :youtube_url,
             format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]) },
             allow_blank: true
-  validates :slug, presence: true, uniqueness: true, format: { with: /\A[a-z0-9\-]+\z/ }
+  # Slug removed; profile will be addressed by user's username for sharing
 
   enum :gender, { male: 0, female: 1, other: 2, prefer_not_to_say: 3 }
 
-  before_validation :generate_slug, on: :create
-  before_validation :ensure_unique_slug
+  # Slug callbacks removed
 
   scope :in_city, ->(city) { where(location_city: city) }
   scope :in_state, ->(state) { where(location_state: state) }
@@ -30,9 +29,7 @@ class Profile < ApplicationRecord
     super.presence || default_privacy_settings
   end
 
-  def to_param
-    slug
-  end
+  # to_param remains default ID; public routes use username on User
 
   def profile_completed?
     user.profile_completed?
@@ -50,26 +47,5 @@ class Profile < ApplicationRecord
     }
   end
 
-  def generate_slug
-    return if slug.present?
-
-    base_name = display_name.present? ? display_name : "#{first_name} #{last_name}".strip
-    self.slug = base_name.downcase
-                         .gsub(/[^a-z0-9\s]/, "") # Remove special characters
-                         .gsub(/\s+/, "-")        # Replace spaces with hyphens
-                         .gsub(/-+/, "-")         # Remove multiple consecutive hyphens
-                         .gsub(/^-|-$/, "")       # Remove leading/trailing hyphens
-  end
-
-  def ensure_unique_slug
-    return unless slug.present?
-
-    original_slug = slug
-    counter = 2
-
-    while Profile.where(slug: slug).where.not(id: id).exists?
-      self.slug = "#{original_slug}-#{counter}"
-      counter += 1
-    end
-  end
+  # Slug generation removed
 end

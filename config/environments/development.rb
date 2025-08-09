@@ -31,17 +31,10 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Configure mailer via centralized AppConfig
+  # Configure mailer for development to open emails in the browser
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: AppConfig.smtp_address,
-    port: AppConfig.smtp_port,
-    user_name: AppConfig.smtp_username,
-    password: AppConfig.smtp_password,
-    authentication: AppConfig.smtp_authentication,
-    enable_starttls_auto: AppConfig.smtp_enable_starttls_auto
-  }
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.delivery_method = :letter_opener
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false

@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h1>Profiles</h1>
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>User</th>
+        <th>Type</th>
+        <th>Display Name</th>
+        <th>City</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @profiles.each do |p| %>
+        <tr>
+          <td><%= p.id %></td>
+          <td><%= link_to p.user.display_name, admin_user_path(p.user) %></td>
+          <td><%= p.type %></td>
+          <td><%= p.display_name %></td>
+          <td><%= p.location_city %></td>
+          <td><%= time_ago_in_words(p.created_at) %> ago</td>
+          <td><%= link_to "View", admin_profile_path(p), class: "btn btn-sm btn-outline-primary" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @profiles %>
+</div>
+
+

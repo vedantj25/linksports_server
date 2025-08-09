@@ -1,11 +1,11 @@
 class ProfilesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_profile, only: [ :show, :edit, :update, :public_view ]
+  before_action :set_profile, only: [ :show, :edit, :update, :public_view, :complete_setup ]
   before_action :ensure_own_profile, only: [ :edit, :update, :complete_setup ]
 
   # GET /profiles/:id
   def show
-    redirect_to public_view_profile_path(@profile)
+    redirect_to public_profile_path(username: @profile.user.username)
   end
 
   # GET /profiles/:id/public_view
@@ -27,9 +27,9 @@ class ProfilesController < ApplicationController
       update_user_sports if params[:sports].present?
 
       if params[:complete_setup] == "true"
-        redirect_to @profile, notice: "Profile setup completed successfully!"
+        redirect_to profile_path(@profile), notice: "Profile setup completed successfully!"
       else
-        redirect_to @profile, notice: "Profile updated successfully!"
+        redirect_to profile_path(@profile), notice: "Profile updated successfully!"
       end
     else
       @sports = Sport.active.order(:name)
@@ -60,7 +60,7 @@ class ProfilesController < ApplicationController
     if @profile.update(profile_params)
       update_user_sports if params[:sports].present?
       @profile.user.update!(profile_completed: true)
-      redirect_to @profile, notice: "Welcome to LinkSports! Your profile is now complete."
+      redirect_to profile_path(@profile), notice: "Welcome to LinkSports! Your profile is now complete."
     else
       @sports = Sport.active.order(:name)
       @user_sports = @profile.user.user_sports.includes(:sport)
@@ -71,14 +71,15 @@ class ProfilesController < ApplicationController
   private
 
   def set_profile
-    @profile = Profile.find_by!(slug: params[:id])
+    # access profiles by ID within app; public sharing uses /profile/:username
+    @profile = Profile.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to root_path, alert: "Profile not found."
   end
 
   def ensure_own_profile
     unless @profile.user == current_user
-      redirect_to @profile, alert: "You can only edit your own profile."
+      redirect_to profile_path(@profile), alert: "You can only edit your own profile."
     end
   end
 
@@ -124,16 +125,29 @@ class ProfilesController < ApplicationController
     # Clear existing sports
     current_user.user_sports.destroy_all
 
-    # Add new sports
-    params[:sports].each do |sport_data|
-      next if sport_data[:sport_id].blank?
+    # Normalize incoming sports params to an array of attribute hashes
+    sports_param = params[:sports]
+    sport_entries = if sports_param.is_a?(ActionController::Parameters) || sports_param.is_a?(Hash)
+                      sports_param.values
+    else
+                      sports_param
+    end
+
+    Array(sport_entries).each do |entry|
+      attributes = case entry
+      when ActionController::Parameters then entry.to_unsafe_h
+      when Hash then entry
+      else {}
+      end
+
+      next if attributes["sport_id"].blank?
 
       current_user.user_sports.create!(
-        sport_id: sport_data[:sport_id],
-        position: sport_data[:position],
-        skill_level: sport_data[:skill_level],
-        years_experience: sport_data[:years_experience],
-        primary: sport_data[:primary] == "1"
+        sport_id: attributes["sport_id"],
+        position: attributes["position"],
+        skill_level: attributes["skill_level"],
+        years_experience: attributes["years_experience"],
+        primary: attributes["primary"].to_s == "1"
       )
     end
   end

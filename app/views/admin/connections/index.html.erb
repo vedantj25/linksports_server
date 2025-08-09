@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <h1>Connections</h1>
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Requester</th>
+        <th>Addressee</th>
+        <th>Status</th>
+        <th>Created</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @connections.each do |c| %>
+        <tr>
+          <td><%= c.id %></td>
+          <td><%= link_to c.requester_id, admin_user_path(c.requester_id) %></td>
+          <td><%= link_to c.addressee_id, admin_user_path(c.addressee_id) %></td>
+          <td><%= c.status %></td>
+          <td><%= time_ago_in_words(c.created_at) %> ago</td>
+          <td><%= button_to "Remove", admin_connection_path(c), method: :delete, class: "btn btn-sm btn-danger" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @connections %>
+</div>
+
+

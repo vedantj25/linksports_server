@@ -79,7 +79,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
-  
+
   # Environment variables
   gem "dotenv-rails"
 end
@@ -87,11 +87,11 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  
+
   # Better error pages
   gem "better_errors"
   gem "binding_of_caller"
-  
+
   # Letter opener for email testing
   gem "letter_opener"
 end
@@ -103,3 +103,5 @@ group :test do
   gem "database_cleaner-active_record"
 end
 
+
+# Auditing handled via custom `AuditLog` and `Version` models in app

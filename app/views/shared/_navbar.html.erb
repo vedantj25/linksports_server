@@ -29,6 +29,11 @@
       </ul>
 
       <ul class="navbar-nav">
+        <% if user_signed_in? && current_user.admin? %>
+          <li class="nav-item">
+            <%= link_to "Admin", admin_dashboard_path, class: "nav-link" %>
+          </li>
+        <% end %>
         <% if user_signed_in? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -36,7 +41,7 @@
               <%= current_user.display_name %>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><%= link_to profile_path(current_user.profile), class: "dropdown-item" do %>
+              <li><%= link_to public_profile_path(username: current_user.username), class: "dropdown-item" do %>
                 <i class="fas fa-user me-2"></i>My Profile
               <% end %></li>
               <li><%= link_to edit_profile_path(current_user.profile), class: "dropdown-item" do %>

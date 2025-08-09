@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <h1>Users</h1>
+  <%= form_with url: search_admin_users_path, method: :get, local: true, class: "row g-2" do |f| %>
+    <div class="col-auto">
+      <%= text_field_tag :q, @q, class: "form-control", placeholder: "Search email, username, name" %>
+    </div>
+    <div class="col-auto">
+      <%= submit_tag "Search", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |u| %>
+        <tr>
+          <td><%= u.id %></td>
+          <td><%= u.display_name %></td>
+          <td><%= u.username %></td>
+          <td><%= u.email %></td>
+          <td>
+            <% if u.banned %>
+              <span class="badge bg-danger">Banned</span>
+            <% elsif !u.active %>
+              <span class="badge bg-secondary">Inactive</span>
+            <% else %>
+              <span class="badge bg-success">Active</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to "View", admin_user_path(u), class: "btn btn-sm btn-outline-primary" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= paginate @users %>
+</div>
+
+

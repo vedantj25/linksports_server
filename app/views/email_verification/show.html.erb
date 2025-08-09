@@ -1,0 +1,31 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="mb-3">Verify your email</h3>
+          <p>We sent a 6-digit code to <strong><%= @email %></strong>. Enter it below. The code expires in 10 minutes.</p>
+
+          <%= form_with url: verify_email_path, method: :post, local: true do |f| %>
+            <%= hidden_field_tag :user_id, params[:user_id] %>
+            <div class="mb-3">
+              <label for="verification_code" class="form-label">Verification code</label>
+              <%= text_field_tag :verification_code, nil, class: "form-control", maxlength: 6, autofocus: true %>
+            </div>
+            <div class="d-grid gap-2">
+              <%= submit_tag "Verify", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+
+          <hr class="my-4"/>
+          <%= form_with url: resend_email_code_path, method: :post, local: true do |f| %>
+            <%= hidden_field_tag :user_id, params[:user_id] %>
+            <%= submit_tag "Resend code", class: "btn btn-link" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

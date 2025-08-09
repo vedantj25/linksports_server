@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <h1>User #<%= @user.id %> - <%= @user.display_name %></h1>
+  <p><strong>Username:</strong> <%= @user.username %></p>
+  <p><strong>Email:</strong> <%= @user.email %> (<%= @user.email_verified? ? "verified" : "unverified" %>)</p>
+  <p><strong>Phone:</strong> <%= @user.phone %> (<%= @user.phone_verified? ? "verified" : "unverified" %>)</p>
+  <p><strong>Status:</strong>
+    <% if @user.banned %>
+      <span class="badge bg-danger">Banned</span>
+    <% elsif !@user.active %>
+      <span class="badge bg-secondary">Inactive</span>
+    <% else %>
+      <span class="badge bg-success">Active</span>
+    <% end %>
+  </p>
+
+  <div class="mt-3 d-flex gap-2">
+    <% if @user.active %>
+      <%= button_to "Deactivate", deactivate_admin_user_path(@user), method: :patch, params: { reason: "manual" }, class: "btn btn-warning" %>
+    <% else %>
+      <%= button_to "Activate", activate_admin_user_path(@user), method: :patch, class: "btn btn-success" %>
+    <% end %>
+
+    <% if @user.banned %>
+      <%= button_to "Unban", unban_admin_user_path(@user), method: :patch, class: "btn btn-secondary" %>
+    <% else %>
+      <%= button_to "Ban", ban_admin_user_path(@user), method: :patch, params: { reason: "manual" }, class: "btn btn-danger" %>
+    <% end %>
+
+    <%= button_to "Verify Email", verify_email_admin_user_path(@user), method: :patch, class: "btn btn-outline-primary" %>
+    <%= button_to "Verify Phone", verify_phone_admin_user_path(@user), method: :patch, class: "btn btn-outline-primary" %>
+    <%= button_to "Reset Password", reset_password_admin_user_path(@user), method: :patch, class: "btn btn-outline-dark" %>
+  </div>
+
+  <div class="mt-4">
+    <h3>Edit</h3>
+    <%= form_with model: [:admin, @user], local: true do |f| %>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <%= f.label :first_name %>
+          <%= f.text_field :first_name, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :last_name %>
+          <%= f.text_field :last_name, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :email %>
+          <%= f.email_field :email, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :phone %>
+          <%= f.text_field :phone, class: "form-control" %>
+        </div>
+        <div class="col-md-6">
+          <%= f.label :username %>
+          <%= f.text_field :username, class: "form-control" %>
+        </div>
+      </div>
+      <div class="mt-3">
+        <%= f.submit "Save", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+

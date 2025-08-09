@@ -67,26 +67,50 @@
                   <%= f.label :phone %>
                   <div class="form-text">
                     <i class="fas fa-info-circle me-1"></i>
-                    Primary method for login and verification
+                    Phone is required and must be unique.
                   </div>
                 </div>
               </div>
 
-              <!-- Email (Optional) -->
+              <!-- Email -->
               <div class="mb-3">
                 <div class="form-floating">
-                  <%= f.email_field :email, class: "form-control", placeholder: "Email Address" %>
+                  <%= f.email_field :email, class: "form-control", placeholder: "Email Address", required: true %>
                   <%= f.label :email %>
                   <div class="form-text">
                     <i class="fas fa-info-circle me-1"></i>
-                    Optional - for notifications and recovery
+                    We'll send a 6-digit verification code to this email.
                   </div>
                 </div>
               </div>
 
-              <!-- Password Fields (Hidden - will be auto-generated) -->
-              <%= f.hidden_field :password %>
-              <%= f.hidden_field :password_confirmation %>
+              <!-- Username -->
+              <div class="mb-3">
+                <div class="form-floating">
+                  <%= f.text_field :username, class: "form-control", placeholder: "Username", required: true %>
+                  <%= f.label :username %>
+                  <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    4–12 chars, lowercase a–z, digits, hyphens, underscores. Unique. Used for profile URL.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Password Fields -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <%= f.password_field :password, class: "form-control", placeholder: "Password", required: true %>
+                    <%= f.label :password %>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating">
+                    <%= f.password_field :password_confirmation, class: "form-control", placeholder: "Confirm Password", required: true %>
+                    <%= f.label :password_confirmation %>
+                  </div>
+                </div>
+              </div>
 
               <!-- Terms and Conditions -->
               <div class="mb-4">

@@ -1,0 +1,16 @@
+<div class="container mt-4">
+  <h1>Invite Admin</h1>
+  <%= form_with model: [:admin, @invitation], local: true do |f| %>
+    <div class="mb-3">
+      <%= f.label :email %>
+      <%= f.email_field :email, class: "form-control" %>
+    </div>
+    <div class="mb-3">
+      <%= f.label :role %>
+      <%= f.select :role, AdminInvitation.roles.keys.map { |r| [r.titleize, r] }, {}, class: "form-select" %>
+    </div>
+    <%= f.submit "Create Invitation", class: "btn btn-primary" %>
+  <% end %>
+</div>
+
+

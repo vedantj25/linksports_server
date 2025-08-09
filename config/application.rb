@@ -18,6 +18,9 @@ require "action_cable/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Load centralized AppConfig early so it's available in environment configuration files
+require_relative "app_config"
+
 module LinksportsServer
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.

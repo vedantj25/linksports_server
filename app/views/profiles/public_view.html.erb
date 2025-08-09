@@ -37,27 +37,27 @@
                       </button>
                       <ul class="dropdown-menu">
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareProfile('<%= share_profile_url(@profile) %>', '<%= @meta_title || @profile.display_name %>')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareProfile('<%= public_profile_url(username: @user.username) %>', '<%= @meta_title || @profile.display_name %>')">
                             <i class="fas fa-link me-2"></i>Copy Link
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToWhatsApp('<%= share_profile_url(@profile) %>', 'Check out my LinkSports profile!')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToWhatsApp('<%= public_profile_url(username: @user.username) %>', 'Check out my LinkSports profile!')">
                             <i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToTwitter('<%= share_profile_url(@profile) %>', 'Check out my LinkSports profile!')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToTwitter('<%= public_profile_url(username: @user.username) %>', 'Check out my LinkSports profile!')">
                             <i class="fab fa-twitter me-2 text-info"></i>Twitter
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToLinkedIn('<%= share_profile_url(@profile) %>')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToLinkedIn('<%= public_profile_url(username: @user.username) %>')">
                             <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToFacebook('<%= share_profile_url(@profile) %>')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToFacebook('<%= public_profile_url(username: @user.username) %>')">
                             <i class="fab fa-facebook me-2 text-primary"></i>Facebook
                           </a>
                         </li>
@@ -73,27 +73,27 @@
                       </button>
                       <ul class="dropdown-menu">
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareProfile('<%= share_profile_url(@profile) %>', '<%= @meta_title || @profile.display_name %>')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareProfile('<%= public_profile_url(username: @user.username) %>', '<%= @meta_title || @profile.display_name %>')">
                             <i class="fas fa-link me-2"></i>Copy Link
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToWhatsApp('<%= share_profile_url(@profile) %>', 'Check out <%= @profile.display_name %> on LinkSports!')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToWhatsApp('<%= public_profile_url(username: @user.username) %>', 'Check out <%= @profile.display_name %> on LinkSports!')">
                             <i class="fab fa-whatsapp me-2 text-success"></i>WhatsApp
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToTwitter('<%= share_profile_url(@profile) %>', 'Check out <%= @profile.display_name %> on LinkSports!')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToTwitter('<%= public_profile_url(username: @user.username) %>', 'Check out <%= @profile.display_name %> on LinkSports!')">
                             <i class="fab fa-twitter me-2 text-info"></i>Twitter
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToLinkedIn('<%= share_profile_url(@profile) %>')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToLinkedIn('<%= public_profile_url(username: @user.username) %>')">
                             <i class="fab fa-linkedin me-2 text-primary"></i>LinkedIn
                           </a>
                         </li>
                         <li>
-                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToFacebook('<%= share_profile_url(@profile) %>')">
+                          <a class="dropdown-item" href="javascript:void(0)" onclick="shareToFacebook('<%= public_profile_url(username: @user.username) %>')">
                             <i class="fab fa-facebook me-2 text-primary"></i>Facebook
                           </a>
                         </li>

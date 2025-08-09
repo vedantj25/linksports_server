@@ -188,7 +188,7 @@
                                   <%= link_to "Cancel", profile_path(@profile), class: "btn btn-outline-secondary" %>
               <div>
                 <% unless @profile.user.profile_completed? %>
-                  <%= form.submit "Complete Setup", class: "btn btn-success me-2", name: "complete_setup", value: "true" %>
+                  <%= form.submit "Finish Setup", class: "btn btn-success me-2", formaction: complete_setup_profile_path(@profile) %>
                 <% end %>
                 <%= form.submit "Save Changes", class: "btn btn-primary" %>
               </div>

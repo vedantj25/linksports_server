@@ -1,19 +1,14 @@
 class Api::V1::AuthController < Api::V1::BaseController
-  skip_before_action :authenticate_with_jwt!, only: [ :login, :register, :verify_phone, :resend_code ]
+  skip_before_action :authenticate_with_jwt!, only: [ :login, :register, :verify_email, :resend_email_code ]
 
   # POST /api/v1/auth/register
   def register
     user = User.new(user_params)
-    user.password = SecureRandom.hex(10) # Generate random password for phone-based auth
-    user.password_confirmation = user.password
-
     if user.save
-      user.generate_phone_verification_code
-      render_success({
-        user_id: user.id,
-        phone: user.phone,
-        message: "Verification code sent to your phone"
-      }, "Registration successful. Please verify your phone number.")
+      email_contact = user.user_contacts.find_or_initialize_by(contact_type: :email, value: user.email)
+      email_contact.save! if email_contact.new_record?
+      email_contact.generate_and_send_otp
+      render_success({ user_id: user.id, username: user.username, email: user.email }, "Registration successful. Please verify your email.")
     else
       render_error("Registration failed", :unprocessable_entity, user.errors)
     end
@@ -21,56 +16,51 @@ class Api::V1::AuthController < Api::V1::BaseController
 
   # POST /api/v1/auth/login
   def login
-    phone = params[:phone]
-    user = User.find_by(phone: phone)
+    login_value = params[:login].to_s
+    password = params[:password].to_s
+    user = User.find_for_database_authentication(login: login_value)
 
-    if user&.verified?
-      user.generate_phone_verification_code
-      render_success({
-        user_id: user.id,
-        phone: user.phone
-      }, "Verification code sent to your phone")
+    if user&.valid_password?(password)
+      unless user.email_verified?
+        return render_error("Email not verified", :unauthorized)
+      end
+      user.update!(last_sign_in_at: Time.current)
+      token = generate_jwt_token(user)
+      render_success({ token: token, user: user_data(user) }, "Login successful")
     else
-      render_error("Phone number not found or not verified", :not_found)
+      render_error("Invalid credentials", :unauthorized)
     end
   end
 
-  # POST /api/v1/auth/verify_phone
-  def verify_phone
+  # POST /api/v1/auth/verify_email
+  def verify_email
     user = User.find_by(id: params[:user_id])
-    verification_code = params[:verification_code]
+    return render_error("User not found", :not_found) unless user
 
-    unless user
-      return render_error("User not found", :not_found)
-    end
+    contact = user.user_contacts.find_by(contact_type: :email, value: user.email)
+    return render_error("Verification not initiated", :unprocessable_entity) unless contact
 
-    if user.phone_verification_code_valid?(verification_code)
-      if params[:type] == "registration"
-        user.verify_phone!
-      end
-
+    if contact.verify_code!(params[:verification_code])
       user.update!(last_sign_in_at: Time.current)
       token = generate_jwt_token(user)
-
-      render_success({
-        token: token,
-        user: user_data(user)
-      }, "Phone verified successfully")
+      render_success({ token: token, user: user_data(user) }, "Email verified successfully")
     else
       render_error("Invalid or expired verification code", :unauthorized)
     end
   end
 
-  # POST /api/v1/auth/resend_code
-  def resend_code
+  # POST /api/v1/auth/resend_email_code
+  def resend_email_code
     user = User.find_by(id: params[:user_id])
+    return render_error("User not found", :not_found) unless user
 
-    unless user
-      return render_error("User not found", :not_found)
+    contact = user.user_contacts.find_or_create_by!(contact_type: :email, value: user.email)
+    begin
+      contact.generate_and_send_otp
+      render_success({ email: user.email }, "New verification code sent")
+    rescue => e
+      render_error(e.message, :too_many_requests)
     end
-
-    user.generate_phone_verification_code
-    render_success({ phone: user.phone }, "New verification code sent")
   end
 
   # POST /api/v1/auth/logout
@@ -88,7 +78,7 @@ class Api::V1::AuthController < Api::V1::BaseController
   private
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :phone, :user_type, :email)
+    params.require(:user).permit(:first_name, :last_name, :phone, :user_type, :email, :username, :password, :password_confirmation)
   end
 
   def generate_jwt_token(user)
@@ -107,8 +97,9 @@ class Api::V1::AuthController < Api::V1::BaseController
       display_name: user.display_name,
       phone: user.phone,
       email: user.email,
+      username: user.username,
       user_type: user.user_type,
-      verified: user.verified?,
+      email_verified: user.email_verified?,
       profile_completed: user.profile_completed?,
       profile_id: user.profile&.id,
       created_at: user.created_at,

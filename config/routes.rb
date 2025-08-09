@@ -1,12 +1,65 @@
 Rails.application.routes.draw do
+  namespace :admin do
+    root to: "dashboard#index"
+    get "dashboard", to: "dashboard#index"
+
+    resources :users, only: [ :index, :show, :edit, :update ] do
+      collection do
+        get :search
+      end
+      member do
+        patch :activate
+        patch :deactivate
+        patch :ban
+        patch :unban
+        patch :soft_delete
+        patch :restore
+        patch :verify_email
+        patch :verify_phone
+        patch :reset_password
+        patch :force_logout
+      end
+    end
+
+    resources :profiles, only: [ :index, :show, :edit, :update ]
+
+    resources :posts, only: [ :index, :show, :update, :destroy ] do
+      member do
+        patch :hide
+        patch :unhide
+        patch :soft_delete
+        patch :restore
+        patch :disable_comments
+        patch :enable_comments
+      end
+    end
+
+    resources :comments, only: [ :index, :show, :destroy ] do
+      member do
+        patch :soft_delete
+        patch :restore
+      end
+    end
+
+    resources :likes, only: [ :index, :destroy ]
+    resources :sports
+    resources :connections, only: [ :index, :destroy ]
+    resources :user_contacts, only: [ :index, :update ]
+
+    resources :invitations, only: [ :index, :new, :create ] do
+      collection do
+        get :accept
+      end
+    end
+  end
   # API routes
   namespace :api do
     namespace :v1 do
       # Authentication
       post "auth/register", to: "auth#register"
       post "auth/login", to: "auth#login"
-      post "auth/verify_phone", to: "auth#verify_phone"
-      post "auth/resend_code", to: "auth#resend_code"
+      post "auth/verify_email", to: "auth#verify_email"
+      post "auth/resend_email_code", to: "auth#resend_email_code"
       post "auth/logout", to: "auth#logout"
       get "auth/me", to: "auth#me"
 
@@ -39,8 +92,11 @@ Rails.application.routes.draw do
     end
   end
 
-  # Sharing routes
-  get "/share/profile/:slug", to: "shares#show", as: :share_profile
+  # Posts
+  resources :posts, only: [ :create ]
+
+  # Sharing routes (username-based)
+  get "/profile/:username", to: "shares#show", as: :public_profile
   # Authentication routes
   devise_for :users, controllers: {
     registrations: "users/registrations",
@@ -48,9 +104,10 @@ Rails.application.routes.draw do
   }
 
   # Phone verification routes
-  get "/phone_verification", to: "phone_verification#show"
-  post "/phone_verification", to: "phone_verification#verify"
-  post "/phone_verification/resend", to: "phone_verification#resend"
+  # Email verification routes
+  get "/verify_email", to: "email_verification#show"
+  post "/verify_email", to: "email_verification#verify"
+  post "/resend_email_code", to: "email_verification#resend"
 
   # Root route
   root "home#index"

@@ -79,17 +79,17 @@
                 <div class="card h-100">
                   <div class="card-body text-center">
                     <div class="mb-3">
-                      <% if profile.user.avatar.attached? %>
-                        <%= image_tag profile.user.avatar, alt: profile.user.display_name, class: "rounded-circle", style: "width: 80px; height: 80px; object-fit: cover;" %>
+                    <% if profile.profile_image.attached? %>
+                      <%= image_tag profile.profile_image, alt: profile.user.display_name, class: "rounded-circle", style: "width: 80px; height: 80px; object-fit: cover;" %>
                       <% else %>
                         <i class="fas fa-user-circle fa-5x text-muted"></i>
                       <% end %>
                     </div>
                     <h5 class="card-title"><%= profile.user.display_name %></h5>
-                    <p class="text-muted"><%= profile.user_type.humanize %></p>
-                    <% if profile.sports.any? %>
+                    <p class="text-muted"><%= profile.user.user_type.humanize %></p>
+                    <% if profile.user.sports.any? %>
                       <div class="mb-3">
-                        <% profile.sports.limit(3).each do |sport| %>
+                        <% profile.user.sports.limit(3).each do |sport| %>
                           <span class="badge bg-primary me-1"><%= sport.name %></span>
                         <% end %>
                       </div>

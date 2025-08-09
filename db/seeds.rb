@@ -51,3 +51,27 @@ sports_data.each do |sport_attrs|
 end
 
 puts "Created #{Sport.count} sports"
+
+# Seed initial admin if none
+if User.where(role: :admin).count.zero?
+  admin_email = ENV.fetch("INITIAL_ADMIN_EMAIL", "admin@example.com")
+  admin_password = ENV.fetch("INITIAL_ADMIN_PASSWORD", "password123")
+  admin = User.find_or_initialize_by(email: admin_email)
+  if admin.new_record?
+    admin.assign_attributes(
+      password: admin_password,
+      password_confirmation: admin_password,
+      phone: "+911234567890",
+      user_type: :club,
+      first_name: "Admin",
+      last_name: "User",
+      username: "admin_user",
+      verified: true,
+      role: :admin
+    )
+    admin.save!
+  else
+    admin.update!(role: :admin)
+  end
+  puts "Seeded initial admin: #{admin.email}"
+end

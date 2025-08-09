@@ -21,8 +21,9 @@ class ApplicationController < ActionController::Base
   def skip_profile_completion_check?
     # Skip check for these controllers/actions
     devise_controller? ||
+    params[:controller].to_s.start_with?("admin/") ||
     controller_name == "profiles" ||
-    controller_name == "phone_verification" ||
+    controller_name == "email_verification" ||
     (controller_name == "home" && action_name == "index")
   end
 end

@@ -1,5 +1,5 @@
 class Api::V1::ProfilesController < Api::V1::BaseController
-  before_action :set_profile, only: [ :show, :update ]
+  before_action :set_profile, only: [ :show, :update, :complete_setup ]
   before_action :ensure_own_profile, only: [ :update, :complete_setup ]
 
   # GET /api/v1/profiles/:id
@@ -65,7 +65,9 @@ class Api::V1::ProfilesController < Api::V1::BaseController
     sport_id = params[:sport_id]
     user_type = params[:user_type]
 
-    profiles = Profile.joins(:user).where(users: { verified: true, active: true })
+    profiles = Profile.joins(user: :user_contacts)
+                      .where(users: { active: true })
+                      .where(user_contacts: { contact_type: UserContact.contact_types[:email], verified: true })
 
     if query.present?
       profiles = profiles.where(
@@ -100,7 +102,7 @@ class Api::V1::ProfilesController < Api::V1::BaseController
   private
 
   def set_profile
-    @profile = Profile.find_by!(slug: params[:id])
+    @profile = Profile.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render_error("Profile not found", :not_found)
   end
@@ -173,7 +175,7 @@ class Api::V1::ProfilesController < Api::V1::BaseController
       user: {
         id: profile.user.id,
         user_type: profile.user.user_type,
-        verified: profile.user.verified?,
+        email_verified: profile.user.email_verified?,
         profile_completed: profile.user.profile_completed?,
         posts_count: profile.user.posts_count,
         connections_count: profile.user.connections_count

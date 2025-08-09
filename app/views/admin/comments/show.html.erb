@@ -1,0 +1,13 @@
+<div class="container mt-4">
+  <h1>Comment #<%= @comment.id %></h1>
+  <p><strong>User:</strong> <%= link_to @comment.user.display_name, admin_user_path(@comment.user) %></p>
+  <p><strong>Post:</strong> <%= link_to @comment.post_id, admin_post_path(@comment.post_id) %></p>
+  <pre><%= @comment.content %></pre>
+  <div class="mt-3 d-flex gap-2">
+    <%= button_to "Soft Delete", soft_delete_admin_comment_path(@comment), method: :patch, class: "btn btn-warning" %>
+    <%= button_to "Restore", restore_admin_comment_path(@comment), method: :patch, class: "btn btn-success" %>
+    <%= button_to "Delete", admin_comment_path(@comment), method: :delete, class: "btn btn-danger" %>
+  </div>
+</div>
+
+

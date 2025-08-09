@@ -28,4 +28,7 @@
 #       enabled: "ON"
 
 en:
+  devise:
+    failure:
+      unverified_email: "You need to verify your email before continuing."
   hello: "Hello world"
