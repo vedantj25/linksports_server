@@ -3,7 +3,10 @@ module Admin
     before_action :set_comment, only: [ :show, :destroy, :soft_delete, :restore ]
 
     def index
-      @comments = Comment.order(created_at: :desc).page(params[:page]).per(25)
+      comments = Comment.all
+      sort = params[:sort].presence_in(%w[id created_at]) || "created_at"
+      dir = params[:dir].presence_in(%w[asc desc]) || "desc"
+      @comments = comments.order("#{sort} #{dir}").page(params[:page]).per(25)
     end
 
     def show; end

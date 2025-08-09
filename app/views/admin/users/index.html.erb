@@ -1,22 +1,35 @@
-<div class="container mt-4">
-  <h1>Users</h1>
-  <%= form_with url: search_admin_users_path, method: :get, local: true, class: "row g-2" do |f| %>
-    <div class="col-auto">
-      <%= text_field_tag :q, @q, class: "form-control", placeholder: "Search email, username, name" %>
-    </div>
-    <div class="col-auto">
-      <%= submit_tag "Search", class: "btn btn-primary" %>
-    </div>
-  <% end %>
+<% content_for :admin_breadcrumb do %>
+  <span>Users</span>
+<% end %>
 
-  <table class="table table-striped mt-3">
+<div class="container-fluid">
+  <h1 class="h3 mb-3">Users</h1>
+  <div class="mb-2 d-flex flex-wrap align-items-center gap-2">
+    <ul class="nav nav-pills admin-pills">
+      <% status = params[:status].to_s %>
+      <li class="nav-item"><%= link_to "All", admin_users_path, class: "nav-link #{'active' if status.blank?}" %></li>
+      <li class="nav-item"><%= link_to "Active", admin_users_path(status: 'active'), class: "nav-link #{'active' if status == 'active'}" %></li>
+      <li class="nav-item"><%= link_to "Inactive", admin_users_path(status: 'inactive'), class: "nav-link #{'active' if status == 'inactive'}" %></li>
+      <li class="nav-item"><%= link_to "Banned", admin_users_path(status: 'banned'), class: "nav-link #{'active' if status == 'banned'}" %></li>
+      <li class="nav-item"><%= link_to "Admins", admin_users_path(status: 'admin'), class: "nav-link #{'active' if status == 'admin'}" %></li>
+    </ul>
+    <%= form_with url: search_admin_users_path, method: :get, local: true, class: "js-auto-submit d-flex align-items-center gap-2" do %>
+      <%= text_field_tag :q, @q, class: "form-control", placeholder: "Search email, username, name" %>
+      <% if params[:status].present? %>
+        <%= hidden_field_tag :status, params[:status] %>
+      <% end %>
+    <% end %>
+  </div>
+  
+
+  <table class="table table-hover align-middle mt-3">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Status</th>
+        <th><%= sort_link('id', 'ID') %></th>
+        <th><%= sort_link('first_name', 'Name') %></th>
+        <th><%= sort_link('username', 'Username') %></th>
+        <th><%= sort_link('email', 'Email') %></th>
+        <th><%= sort_link('active', 'Status') %></th>
         <th>Actions</th>
       </tr>
     </thead>

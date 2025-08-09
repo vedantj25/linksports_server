@@ -1,0 +1,45 @@
+<% content_for :admin_breadcrumb do %>
+  <span>Sports</span>
+<% end %>
+
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Sports</h1>
+    <div class="d-flex align-items-center gap-2">
+      <%= form_with url: admin_sports_path, method: :get, local: true, class: "d-flex align-items-center gap-2" do %>
+        <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search name or category" %>
+        <div class="form-check">
+          <%= check_box_tag :active, '1', params[:active] == '1', class: "form-check-input", id: "filter_active" %>
+          <label class="form-check-label" for="filter_active">Active only</label>
+        </div>
+        <button class="btn btn-outline-primary" type="submit">Filter</button>
+      <% end %>
+      <%= link_to "New Sport", new_admin_sport_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+  <table class="table table-hover align-middle">
+    <thead>
+      <tr>
+        <th><%= sort_link('id', 'ID') %></th>
+        <th><%= sort_link('name', 'Name') %></th>
+        <th><%= sort_link('category', 'Category') %></th>
+        <th><%= sort_link('active', 'Active') %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @sports.each do |s| %>
+        <tr>
+          <td><%= s.id %></td>
+          <td><%= s.name %></td>
+          <td><%= s.category %></td>
+          <td><span class="badge <%= s.active ? 'bg-success' : 'bg-secondary' %>"><%= s.active ? 'Yes' : 'No' %></span></td>
+          <td><%= link_to "View", admin_sport_path(s), class: "btn btn-sm btn-outline-primary" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @sports %>
+  </div>
+
+

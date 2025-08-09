@@ -1,5 +1,9 @@
-<div class="container mt-4">
-  <h1>User #<%= @user.id %> - <%= @user.display_name %></h1>
+<% content_for :admin_breadcrumb do %>
+  <%= link_to 'Users', admin_users_path %> <span class="divider">/</span> <span><%= @user.username %></span>
+<% end %>
+
+<div class="container-fluid">
+  <h1 class="h3 mb-3">User #<%= @user.id %> · <%= @user.display_name %></h1>
   <p><strong>Username:</strong> <%= @user.username %></p>
   <p><strong>Email:</strong> <%= @user.email %> (<%= @user.email_verified? ? "verified" : "unverified" %>)</p>
   <p><strong>Phone:</strong> <%= @user.phone %> (<%= @user.phone_verified? ? "verified" : "unverified" %>)</p>
@@ -13,7 +17,7 @@
     <% end %>
   </p>
 
-  <div class="mt-3 d-flex gap-2">
+  <div class="mt-3 d-flex flex-wrap gap-2">
     <% if @user.active %>
       <%= button_to "Deactivate", deactivate_admin_user_path(@user), method: :patch, params: { reason: "manual" }, class: "btn btn-warning" %>
     <% else %>
@@ -32,7 +36,7 @@
   </div>
 
   <div class="mt-4">
-    <h3>Edit</h3>
+    <h3 class="h5">Edit</h3>
     <%= form_with model: [:admin, @user], local: true do |f| %>
       <div class="row g-3">
         <div class="col-md-6">

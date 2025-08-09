@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :admin do
     root to: "dashboard#index"
     get "dashboard", to: "dashboard#index"
+    get "login", to: redirect("/users/sign_in")
 
     resources :users, only: [ :index, :show, :edit, :update ] do
       collection do

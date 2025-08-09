@@ -4,33 +4,113 @@
     <title>Admin · LinkSports</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= yield :head %>
     <%= stylesheet_link_tag :application, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="<%= admin_dashboard_path %>">Admin</a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item"><%= link_to "Dashboard", admin_dashboard_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Users", admin_users_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Profiles", admin_profiles_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Posts", admin_posts_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Comments", admin_comments_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Likes", admin_likes_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Sports", admin_sports_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Connections", admin_connections_path, class: "nav-link" %></li>
-            <li class="nav-item"><%= link_to "Invitations", admin_invitations_path, class: "nav-link" %></li>
-          </ul>
-          <span class="navbar-text text-white">Signed in as <%= current_user&.email %></span>
+  <body class="admin-layout">
+    <div class="d-flex" style="min-height:100vh;">
+      <aside id="adminSidebar" class="admin-sidebar p-3">
+        <div class="mb-4 brand">
+          <i class="fas fa-trophy text-primary-custom"></i>
+          <span class="brand-text">LinkSports Admin</span>
         </div>
-      </div>
-    </nav>
-    <div class="container mt-3">
-      <%= render "shared/flash_messages" %>
-      <%= yield %>
+        <nav class="nav flex-column">
+          <%= link_to admin_dashboard_path, class: "admin-nav-link nav-link #{'active' if current_page?(admin_dashboard_path)}" do %>
+            <i class="fa-solid fa-gauge"></i> <span class="label-text">Dashboard</span>
+          <% end %>
+          <div class="mt-3 admin-nav-section small text-uppercase">Users & Profiles</div>
+          <%= link_to admin_users_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'users'}" do %>
+            <i class="fa-solid fa-users"></i> <span class="label-text">Users</span>
+          <% end %>
+          <%= link_to admin_profiles_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'profiles'}" do %>
+            <i class="fa-solid fa-id-card"></i> <span class="label-text">Profiles</span>
+          <% end %>
+          <div class="mt-3 admin-nav-section small text-uppercase">Content</div>
+          <%= link_to admin_posts_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'posts'}" do %>
+            <i class="fa-solid fa-square-pen"></i> <span class="label-text">Posts</span>
+          <% end %>
+          <%= link_to admin_comments_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'comments'}" do %>
+            <i class="fa-solid fa-comments"></i> <span class="label-text">Comments</span>
+          <% end %>
+          <%= link_to admin_likes_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'likes'}" do %>
+            <i class="fa-solid fa-heart"></i> <span class="label-text">Likes</span>
+          <% end %>
+          <div class="mt-3 admin-nav-section small text-uppercase">Platform</div>
+          <%= link_to admin_sports_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'sports'}" do %>
+            <i class="fa-solid fa-football"></i> <span class="label-text">Sports</span>
+          <% end %>
+          <%= link_to admin_connections_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'connections'}" do %>
+            <i class="fa-solid fa-link"></i> <span class="label-text">Connections</span>
+          <% end %>
+          <div class="mt-3 admin-nav-section small text-uppercase">Access</div>
+          <%= link_to admin_invitations_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'invitations'}" do %>
+            <i class="fa-solid fa-envelope"></i> <span class="label-text">Invitations</span>
+          <% end %>
+        </nav>
+      </aside>
+      <main class="admin-main flex-grow-1 p-4">
+        <div class="admin-topbar">
+          <button class="btn btn-outline-secondary d-lg-none" type="button" onclick="document.getElementById('adminSidebar').classList.toggle('is-open')">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="admin-breadcrumbs ms-3 d-none d-md-inline">
+            <%= link_to 'Admin', admin_dashboard_path %> <span class="divider">/</span>
+            <%= content_for(:admin_breadcrumb) %>
+          </div>
+          <div class="ms-auto d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary btn-sm d-none d-lg-inline" id="collapseToggle" type="button" title="Collapse sidebar"><i class="fa-solid fa-thumbtack"></i></button>
+            <button class="btn btn-outline-secondary btn-sm" id="themeToggle" type="button"><i class="fa-solid fa-sun"></i></button>
+            <span class="text-muted small d-none d-md-inline">Signed in as <%= current_user&.email %></span>
+            <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-outline-danger btn-sm" do %>
+              <i class="fa-solid fa-right-from-bracket"></i> Logout
+            <% end %>
+          </div>
+        </div>
+        <%= render "shared/flash_messages" %>
+        <%= yield %>
+      </main>
     </div>
+    <script>
+      (function() {
+        const body = document.body;
+        const toggle = document.getElementById('themeToggle');
+        const key = 'adminTheme';
+        const saved = localStorage.getItem(key);
+        if (saved === 'light') body.classList.add('admin-light');
+        toggle && toggle.addEventListener('click', function(){
+          body.classList.toggle('admin-light');
+          localStorage.setItem(key, body.classList.contains('admin-light') ? 'light' : 'dark');
+        });
+      })();
+      (function(){
+        const body = document.body;
+        const key = 'adminSidebarCollapsed';
+        if (localStorage.getItem(key) === '1') body.classList.add('admin-collapsed');
+        const btn = document.getElementById('collapseToggle');
+        btn && btn.addEventListener('click', function(){
+          body.classList.toggle('admin-collapsed');
+          localStorage.setItem(key, body.classList.contains('admin-collapsed') ? '1' : '0');
+        });
+      })();
+      (function(){
+        // Auto-submit forms with class js-auto-submit (debounced)
+        const forms = document.querySelectorAll('form.js-auto-submit');
+        forms.forEach(form => {
+          let t;
+          form.addEventListener('input', function(){
+            clearTimeout(t);
+            t = setTimeout(()=>{ form.requestSubmit && form.requestSubmit(); }, 400);
+          });
+          form.addEventListener('change', function(){
+            clearTimeout(t);
+            t = setTimeout(()=>{ form.requestSubmit && form.requestSubmit(); }, 100);
+          });
+        });
+      })();
+    </script>
   </body>
   </html>
 

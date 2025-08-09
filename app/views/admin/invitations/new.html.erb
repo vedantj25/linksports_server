@@ -1,6 +1,6 @@
 <div class="container mt-4">
   <h1>Invite Admin</h1>
-  <%= form_with model: [:admin, @invitation], local: true do |f| %>
+  <%= form_with model: @invitation, url: admin_invitations_path, local: true do |f| %>
     <div class="mb-3">
       <%= f.label :email %>
       <%= f.email_field :email, class: "form-control" %>

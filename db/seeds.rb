@@ -73,5 +73,8 @@ if User.where(role: :admin).count.zero?
   else
     admin.update!(role: :admin)
   end
+  # Ensure email contact exists and is verified for seeded admin
+  email_contact = admin.email_contact || admin.user_contacts.create!(contact_type: :email, value: admin.email)
+  email_contact.update!(verified: true)
   puts "Seeded initial admin: #{admin.email}"
 end

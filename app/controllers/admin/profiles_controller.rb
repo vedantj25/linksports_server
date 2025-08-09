@@ -1,9 +1,12 @@
 module Admin
   class ProfilesController < ApplicationController
-    before_action :set_profile, only: [:show, :edit, :update]
+    before_action :set_profile, only: [ :show, :edit, :update ]
 
     def index
-      @profiles = Profile.includes(:user).order(created_at: :desc).page(params[:page]).per(25)
+      profiles = Profile.includes(:user)
+      sort = params[:sort].presence_in(%w[id type display_name location_city created_at]) || "created_at"
+      dir = params[:dir].presence_in(%w[asc desc]) || "desc"
+      @profiles = profiles.order("#{sort} #{dir}").page(params[:page]).per(25)
     end
 
     def show; end
@@ -27,5 +30,3 @@ module Admin
     end
   end
 end
-
-

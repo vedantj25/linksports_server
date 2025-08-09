@@ -1,7 +1,10 @@
 module Admin
   class ConnectionsController < ApplicationController
     def index
-      @connections = Connection.order(created_at: :desc).page(params[:page]).per(50)
+      connections = Connection.all
+      sort = params[:sort].presence_in(%w[id status created_at]) || "created_at"
+      dir = params[:dir].presence_in(%w[asc desc]) || "desc"
+      @connections = connections.order("#{sort} #{dir}").page(params[:page]).per(50)
     end
 
     def destroy

@@ -1,7 +1,10 @@
 module Admin
   class LikesController < ApplicationController
     def index
-      @likes = Like.order(created_at: :desc).page(params[:page]).per(50)
+      likes = Like.all
+      sort = params[:sort].presence_in(%w[id created_at]) || "created_at"
+      dir = params[:dir].presence_in(%w[asc desc]) || "desc"
+      @likes = likes.order("#{sort} #{dir}").page(params[:page]).per(50)
     end
 
     def destroy

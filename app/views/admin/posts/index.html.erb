@@ -1,13 +1,32 @@
-<div class="container mt-4">
-  <h1>Posts</h1>
-  <table class="table table-striped mt-3">
+<% content_for :admin_breadcrumb do %>
+  <span>Posts</span>
+<% end %>
+
+<div class="container-fluid">
+  <h1 class="h3 mb-3">Posts</h1>
+  <div class="mb-2 d-flex flex-wrap align-items-center gap-2">
+    <ul class="nav nav-pills admin-pills">
+      <% vis = params[:vis].to_s %>
+      <li class="nav-item"><%= link_to "All", admin_posts_path, class: "nav-link #{'active' if vis.blank?}" %></li>
+      <li class="nav-item"><%= link_to "Public", admin_posts_path(vis: 'public_post'), class: "nav-link #{'active' if vis == 'public_post'}" %></li>
+      <li class="nav-item"><%= link_to "Connections", admin_posts_path(vis: 'connections_only'), class: "nav-link #{'active' if vis == 'connections_only'}" %></li>
+      <li class="nav-item"><%= link_to "Private", admin_posts_path(vis: 'private_post'), class: "nav-link #{'active' if vis == 'private_post'}" %></li>
+    </ul>
+    <%= form_with url: admin_posts_path, method: :get, local: true, class: "js-auto-submit d-flex align-items-center gap-2" do %>
+      <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "Search content..." %>
+      <% if params[:vis].present? %>
+        <%= hidden_field_tag :vis, params[:vis] %>
+      <% end %>
+    <% end %>
+  </div>
+  <table class="table table-hover align-middle mt-3">
     <thead>
       <tr>
-        <th>ID</th>
+        <th><%= sort_link('id', 'ID') %></th>
         <th>User</th>
         <th>Content</th>
-        <th>Visibility</th>
-        <th>Created</th>
+        <th><%= sort_link('visibility', 'Visibility') %></th>
+        <th><%= sort_link('created_at', 'Created') %></th>
         <th></th>
       </tr>
     </thead>

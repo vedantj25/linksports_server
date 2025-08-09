@@ -1,9 +1,19 @@
 module Admin
   class PostsController < ApplicationController
-    before_action :set_post, only: [:show, :update, :destroy, :hide, :unhide, :soft_delete, :restore, :disable_comments, :enable_comments]
+    before_action :set_post, only: [ :show, :update, :destroy, :hide, :unhide, :soft_delete, :restore, :disable_comments, :enable_comments ]
 
     def index
-      @posts = Post.order(created_at: :desc).page(params[:page]).per(25)
+      posts = Post.order(created_at: :desc)
+      if params[:vis].present? && Post.visibilities.key?(params[:vis])
+        posts = posts.where(visibility: Post.visibilities[params[:vis]])
+      end
+      if params[:q].present?
+        q = "%#{params[:q].downcase}%"
+        posts = posts.where("LOWER(content) LIKE ?", q)
+      end
+      sort = params[:sort].presence_in(%w[id visibility created_at]) || 'created_at'
+      dir = params[:dir].presence_in(%w[asc desc]) || 'desc'
+      @posts = posts.order("#{sort} #{dir}").page(params[:page]).per(25)
     end
 
     def show; end
@@ -78,5 +88,3 @@ module Admin
     end
   end
 end
-
-

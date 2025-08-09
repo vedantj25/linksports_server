@@ -3,7 +3,19 @@ module Admin
     before_action :set_sport, only: [ :show, :edit, :update, :destroy ]
 
     def index
-      @sports = Sport.order(:name).page(params[:page]).per(50)
+      sports = Sport.all
+      # Filters
+      if params[:q].present?
+        q = "%#{params[:q].downcase}%"
+        sports = sports.where("LOWER(name) LIKE ? OR LOWER(category) LIKE ?", q, q)
+      end
+      if params[:active].present?
+        sports = sports.where(active: params[:active] == "1")
+      end
+      # Sorting
+      sort = params[:sort].presence_in(%w[name category active created_at]) || "name"
+      dir = params[:dir].presence_in(%w[asc desc]) || "asc"
+      @sports = sports.order("#{sort} #{dir}").page(params[:page]).per(50)
     end
 
     def show; end

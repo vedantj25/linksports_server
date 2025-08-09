@@ -9,11 +9,19 @@ module Admin
 
     def index
       @q = params[:q].to_s.strip
-      users = User.order(created_at: :desc)
+      users = User.all
+      case params[:status]
+      when "active" then users = users.where(active: true)
+      when "inactive" then users = users.where(active: false)
+      when "banned" then users = users.where(banned: true)
+      when "admin" then users = users.where(role: :admin)
+      end
       if @q.present?
         users = users.where("LOWER(email) LIKE :q OR LOWER(username) LIKE :q OR LOWER(first_name) LIKE :q OR LOWER(last_name) LIKE :q", q: "%#{@q.downcase}%")
       end
-      @users = users.page(params[:page]).per(25)
+      sort = params[:sort].presence_in(%w[id first_name username email active created_at]) || "created_at"
+      dir = params[:dir].presence_in(%w[asc desc]) || "desc"
+      @users = users.order("#{sort} #{dir}").page(params[:page]).per(25)
     end
 
     def search
@@ -118,5 +126,3 @@ module Admin
     end
   end
 end
-
-
