@@ -42,6 +42,9 @@
           <%= link_to admin_sports_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'sports'}" do %>
             <i class="fa-solid fa-football"></i> <span class="label-text">Sports</span>
           <% end %>
+          <%= link_to admin_sport_attributes_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'sport_attributes'}" do %>
+            <i class="fa-solid fa-list-check"></i> <span class="label-text">Sport Attributes</span>
+          <% end %>
           <%= link_to admin_connections_path, class: "admin-nav-link nav-link #{'active' if controller_name == 'connections'}" do %>
             <i class="fa-solid fa-link"></i> <span class="label-text">Connections</span>
           <% end %>

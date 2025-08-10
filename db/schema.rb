@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_120300) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_154710) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -140,8 +140,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_120300) do
     t.integer "preferred_foot"
     t.integer "playing_status", default: 0
     t.integer "availability", default: 0
-    t.text "achievements", default: [], array: true
-    t.json "training_history", default: []
     t.integer "experience_years"
     t.text "coaching_philosophy"
     t.text "certifications", default: [], array: true
@@ -160,12 +158,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_120300) do
     t.text "address"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "linkedin_url"
+    t.text "highlight_videos", default: [], array: true
+    t.text "media_links", default: [], array: true
+    t.text "key_strengths", default: [], array: true
+    t.text "fitness_tests", default: [], array: true
+    t.jsonb "academic_education_entries", default: []
+    t.jsonb "training_camp_entries", default: []
+    t.jsonb "achievement_entries", default: []
     t.index ["availability"], name: "index_profiles_on_availability"
     t.index ["club_type"], name: "index_profiles_on_club_type"
     t.index ["location_city", "location_state"], name: "index_profiles_on_location_city_and_location_state"
     t.index ["playing_status"], name: "index_profiles_on_playing_status"
     t.index ["type"], name: "index_profiles_on_type"
     t.index ["user_id"], name: "index_profiles_on_user_id"
+  end
+
+  create_table "sport_attribute_mappings", force: :cascade do |t|
+    t.bigint "sport_id", null: false
+    t.bigint "sport_attribute_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sport_attribute_id"], name: "index_sport_attribute_mappings_on_sport_attribute_id"
+    t.index ["sport_id", "sport_attribute_id"], name: "index_sport_attr_mappings_on_sport_and_attribute", unique: true
+    t.index ["sport_id"], name: "index_sport_attribute_mappings_on_sport_id"
+  end
+
+  create_table "sport_attributes", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "label", null: false
+    t.string "field_type", default: "string", null: false
+    t.text "options", default: [], array: true
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_sport_attributes_on_key", unique: true
   end
 
   create_table "sports", force: :cascade do |t|
@@ -193,15 +220,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_120300) do
     t.index ["user_id"], name: "index_user_contacts_on_user_id"
   end
 
+  create_table "user_sport_affiliations", force: :cascade do |t|
+    t.bigint "user_sport_id", null: false
+    t.string "club_team_name", null: false
+    t.string "league_competition"
+    t.integer "start_year"
+    t.integer "end_year"
+    t.text "description"
+    t.boolean "current", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "start_month"
+    t.integer "end_month"
+    t.index ["user_sport_id"], name: "index_user_sport_affiliations_on_user_sport_id"
+  end
+
+  create_table "user_sport_tournaments", force: :cascade do |t|
+    t.bigint "user_sport_id", null: false
+    t.string "tournament_name", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "year"
+    t.index ["user_sport_id", "tournament_name", "year"], name: "idx_unique_tournament_per_year", unique: true
+    t.index ["user_sport_id"], name: "index_user_sport_tournaments_on_user_sport_id"
+  end
+
   create_table "user_sports", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "sport_id", null: false
     t.string "position"
-    t.integer "skill_level"
     t.integer "years_experience"
     t.boolean "primary"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "details", default: {}
     t.index ["sport_id"], name: "index_user_sports_on_sport_id"
     t.index ["user_id"], name: "index_user_sports_on_user_id"
   end
@@ -266,7 +319,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_120300) do
   add_foreign_key "posts", "sports"
   add_foreign_key "posts", "users"
   add_foreign_key "profiles", "users"
+  add_foreign_key "sport_attribute_mappings", "sport_attributes"
+  add_foreign_key "sport_attribute_mappings", "sports"
   add_foreign_key "user_contacts", "users"
+  add_foreign_key "user_sport_affiliations", "user_sports"
+  add_foreign_key "user_sport_tournaments", "user_sports"
   add_foreign_key "user_sports", "sports"
   add_foreign_key "user_sports", "users"
 end

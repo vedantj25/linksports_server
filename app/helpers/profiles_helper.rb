@@ -25,7 +25,7 @@ module ProfilesHelper
     # Add type-specific fields
     case profile.type
     when "PlayerProfile"
-      player_fields = [ :height_cm, :weight_kg, :preferred_foot, :playing_status ]
+      player_fields = [ :height_cm, :weight_kg, :availability ]
       total_fields += player_fields.count
       completed_fields += player_fields.count { |field| profile.send(field).present? }
     when "CoachProfile"

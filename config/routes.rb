@@ -44,6 +44,13 @@ Rails.application.routes.draw do
 
     resources :likes, only: [ :index, :destroy ]
     resources :sports
+    resources :sport_attributes
+    resources :users, only: [ :index, :show, :edit, :update ] do
+      resources :user_sports, only: [ :index, :edit, :update, :destroy ] do
+        resources :affiliations, controller: "user_sport_affiliations"
+        resources :tournaments, controller: "user_sport_tournaments"
+      end
+    end
     resources :connections, only: [ :index, :destroy ]
     resources :user_contacts, only: [ :index, :update ]
 

@@ -1,0 +1,37 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Affiliations for <%= @user_sport.sport.name %> — <%= @user.display_name %></h4>
+    <%= link_to 'Add Affiliation', new_admin_user_user_sport_affiliation_path(@user, @user_sport), class: 'btn btn-primary' %>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Club/Team</th>
+        <th>League</th>
+        <th>Duration</th>
+        <th>Current</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @affiliations.each do |aff| %>
+        <tr>
+          <td><%= aff.club_team_name %></td>
+          <td><%= aff.league_competition %></td>
+          <td>
+            <% start_label = [aff.start_month && Date::MONTHNAMES[aff.start_month], aff.start_year].compact.join(' ') %>
+            <% end_label = aff.current ? 'Present' : [aff.end_month && Date::MONTHNAMES[aff.end_month], aff.end_year].compact.join(' ') %>
+            <%= [start_label.presence, end_label.presence].compact.join(' – ') %>
+          </td>
+          <td><%= aff.current ? 'Yes' : 'No' %></td>
+          <td class="text-end">
+            <%= link_to 'Edit', edit_admin_user_user_sport_affiliation_path(@user, @user_sport, aff), class: 'btn btn-sm btn-outline-primary' %>
+            <%= link_to 'Delete', admin_user_user_sport_affiliation_path(@user, @user_sport, aff), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+

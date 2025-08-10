@@ -18,7 +18,10 @@ module Admin
       @sports = sports.order("#{sort} #{dir}").page(params[:page]).per(50)
     end
 
-    def show; end
+    def show
+      @all_attributes = SportAttribute.order(:key)
+      @mapped_ids = @sport.sport_attribute_mappings.pluck(:sport_attribute_id)
+    end
 
     def new
       @sport = Sport.new
@@ -38,6 +41,14 @@ module Admin
 
     def update
       if @sport.update(sport_params)
+        # Optional mapping updates when checkboxes posted as sport[attribute_ids: []]
+        if params[:sport_attribute_ids]
+          ids = Array(params[:sport_attribute_ids]).map(&:to_i).uniq
+          @sport.sport_attribute_mappings.where.not(sport_attribute_id: ids).delete_all
+          (ids - @sport.sport_attribute_mappings.pluck(:sport_attribute_id)).each do |id|
+            @sport.sport_attribute_mappings.create!(sport_attribute_id: id)
+          end
+        end
         AuditLog.create!(admin_user: current_user, action: "update_sport", record_type: "Sport", record_id: @sport.id, changeset: @sport.previous_changes.except(:updated_at))
         redirect_to admin_sport_path(@sport), notice: "Sport updated."
       else

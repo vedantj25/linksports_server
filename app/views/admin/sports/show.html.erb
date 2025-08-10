@@ -18,6 +18,36 @@
     <dt class="col-sm-2">Active</dt>
     <dd class="col-sm-10"><%= @sport.active ? 'Yes' : 'No' %></dd>
   </dl>
+
+  <hr>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="m-0">Mapped Attributes</h5>
+        <div class="d-flex gap-2">
+          <%= link_to "New Attribute", new_admin_sport_attribute_path, class: "btn btn-sm btn-outline-primary" %>
+          <%= link_to "Manage Attributes", admin_sport_attributes_path, class: "btn btn-sm btn-outline-secondary" %>
+        </div>
+      </div>
+      <form method="post" action="<%= admin_sport_path(@sport) %>">
+        <%= hidden_field_tag :_method, 'patch' %>
+        <%= csrf_meta_tags %>
+        <div class="border rounded p-3" style="max-height: 360px; overflow: auto;">
+          <% @all_attributes.each do |attr| %>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="sport_attribute_ids[]" value="<%= attr.id %>" id="attr_<%= attr.id %>" <%= 'checked' if @mapped_ids.include?(attr.id) %>>
+              <label class="form-check-label" for="attr_<%= attr.id %>">
+                <strong><%= attr.label %></strong> <span class="text-muted">(<%= attr.key %>, <%= attr.field_type %>)</span>
+              </label>
+            </div>
+          <% end %>
+        </div>
+        <div class="mt-3">
+          <button type="submit" class="btn btn-primary">Save Mappings</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 

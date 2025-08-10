@@ -20,6 +20,32 @@ body {
   line-height: 1.6;
 }
 
+// Layout: ensure footer sticks to bottom and provide comfortable top spacing under navbar
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  flex: 0 0 auto;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-top: 1rem; // breathing room below navbar
+}
+
+footer {
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
 // Header Styles
 .navbar-brand {
   font-weight: 700;
@@ -285,4 +311,15 @@ body {
 .admin-collapsed .admin-sidebar .nav-link {
   width: 100%;
   text-align: center;
+}
+
+// -----------------------------
+// Profile Edit Layout Tweaks
+// -----------------------------
+.profile-edit .card-body {
+  overflow: visible;
+}
+
+.profile-edit .row.g-2>[class^="col-"] {
+  min-width: 0;
 }

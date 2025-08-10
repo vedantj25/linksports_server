@@ -68,3 +68,22 @@
 </div>
 
 
+<div class="container-fluid mt-4">
+  <h3 class="h5">Sports</h3>
+  <% @user.user_sports.includes(:sport).each do |us| %>
+    <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
+      <div>
+        <strong><%= us.sport.name %></strong>
+        <% if us.primary? %><span class="badge bg-primary ms-2">Primary</span><% end %>
+      </div>
+      <div class="d-flex gap-2">
+        <%= link_to 'Manage Affiliations', admin_user_user_sport_affiliations_path(@user, us), class: 'btn btn-sm btn-outline-primary' %>
+        <%= link_to 'Manage Tournaments', admin_user_user_sport_tournaments_path(@user, us), class: 'btn btn-sm btn-outline-secondary' %>
+      </div>
+    </div>
+  <% end %>
+  <% if @user.user_sports.empty? %>
+    <div class="text-muted">No sports added yet.</div>
+  <% end %>
+</div>
+

@@ -22,37 +22,14 @@
       </div>
     </div>
     
-    <div class="col-md-4 mb-3">
-      <div class="form-floating">
-        <%= form.select :preferred_foot, options_for_select([
-          ['Select Preferred Foot', ''],
-          ['Left', 'left'],
-          ['Right', 'right'],
-          ['Both', 'both']
-        ], @profile.preferred_foot), {}, { class: "form-select" } %>
-        <%= form.label :preferred_foot %>
-      </div>
-    </div>
+    <!-- Preferred foot removed per feedback -->
   </div>
   
-  <!-- Status & Availability -->
+  <!-- Availability -->
   <div class="row mb-4">
     <div class="col-12">
-      <h6 class="text-muted mb-3">Status & Availability</h6>
+      <h6 class="text-muted mb-3">Availability</h6>
     </div>
-    
-    <div class="col-md-6 mb-3">
-      <div class="form-floating">
-        <%= form.select :playing_status, options_for_select([
-          ['Select Playing Status', ''],
-          ['Amateur', 'amateur'],
-          ['Semi-Professional', 'semi_professional'],
-          ['Professional', 'professional']
-        ], @profile.playing_status), {}, { class: "form-select" } %>
-        <%= form.label :playing_status %>
-      </div>
-    </div>
-    
     <div class="col-md-6 mb-3">
       <div class="form-floating">
         <%= form.select :availability, options_for_select([
@@ -70,15 +47,19 @@
   <div class="mb-4">
     <h6 class="text-muted mb-3">Achievements</h6>
     <div id="achievements-container">
-      <% if @profile.achievements_list.any? %>
-        <% @profile.achievements_list.each_with_index do |achievement, index| %>
+      <% if @profile.achievement_entries_list.any? %>
+        <% @profile.achievement_entries_list.each do |entry| %>
           <div class="achievement-entry mb-2">
-            <div class="input-group">
-              <input type="text" name="player_profile[achievements][]" class="form-control" 
-                     placeholder="Achievement" value="<%= achievement %>">
-              <button type="button" class="btn btn-outline-danger remove-achievement">
-                <i class="fas fa-trash"></i>
-              </button>
+            <div class="row g-2">
+              <div class="col-md-7">
+                <input type="text" name="player_profile[achievement_entries][][name]" class="form-control" placeholder="Achievement" value="<%= entry['name'] %>">
+              </div>
+              <div class="col-md-3">
+                <input type="number" name="player_profile[achievement_entries][][year]" class="form-control" placeholder="Year" min="1900" max="2100" value="<%= entry['year'] %>">
+              </div>
+              <div class="col-md-2 d-flex align-items-center">
+                <button type="button" class="btn btn-outline-danger remove-achievement w-100"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
           </div>
         <% end %>
@@ -87,82 +68,211 @@
     <button type="button" class="btn btn-outline-primary btn-sm" id="add-achievement">
       <i class="fas fa-plus me-2"></i>Add Achievement
     </button>
-    <div class="form-text">Add your sports achievements, awards, or recognition</div>
+    <div class="form-text">Add your sports achievements (with year)</div>
   </div>
-  
-  <!-- Training History -->
+
+  <!-- Key Strengths -->
   <div class="mb-4">
-    <h6 class="text-muted mb-3">Training History</h6>
-    <div id="training-container">
-      <% if @profile.training_history_list.any? %>
-        <% @profile.training_history_list.each_with_index do |training, index| %>
-          <div class="training-entry mb-2">
+    <h6 class="text-muted mb-3">Key Strengths</h6>
+    <div id="key-strengths-container">
+      <% if @profile.key_strengths_list.any? %>
+        <% @profile.key_strengths_list.each do |strength| %>
+          <div class="strength-entry mb-2">
             <div class="input-group">
-              <input type="text" name="player_profile[training_history][]" class="form-control" 
-                     placeholder="Training/Academy" value="<%= training %>">
-              <button type="button" class="btn btn-outline-danger remove-training">
-                <i class="fas fa-trash"></i>
-              </button>
+              <input type="text" name="player_profile[key_strengths][]" class="form-control" placeholder="e.g., Speed, Vision" value="<%= strength %>">
+              <button type="button" class="btn btn-outline-danger remove-strength"><i class="fas fa-trash"></i></button>
             </div>
           </div>
         <% end %>
       <% end %>
     </div>
-    <button type="button" class="btn btn-outline-primary btn-sm" id="add-training">
-      <i class="fas fa-plus me-2"></i>Add Training
-    </button>
-    <div class="form-text">Add academies, clubs, or training programs you've been part of</div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-strength"><i class="fas fa-plus me-2"></i>Add Strength</button>
+  </div>
+
+  <!-- Fitness Tests -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Fitness Tests</h6>
+    <div id="fitness-tests-container">
+      <% if @profile.fitness_tests_list.any? %>
+        <% @profile.fitness_tests_list.each do |test|
+ %>
+          <div class="fitness-test-entry mb-2">
+            <div class="input-group">
+              <input type="text" name="player_profile[fitness_tests][]" class="form-control" placeholder="e.g., Yo-Yo 18.2" value="<%= test %>">
+              <button type="button" class="btn btn-outline-danger remove-fitness-test"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-fitness-test"><i class="fas fa-plus me-2"></i>Add Test</button>
+  </div>
+
+  <!-- Education -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Academic Education</h6>
+    <div id="education-container">
+      <% if @profile.academic_education_entries_list.any? %>
+        <% @profile.academic_education_entries_list.each do |entry| %>
+          <div class="education-entry mb-2">
+            <div class="row g-2">
+              <div class="col-md-6">
+                <input type="text" name="player_profile[academic_education_entries][][name]" class="form-control" placeholder="School/College" value="<%= entry['name'] %>">
+              </div>
+              <div class="col-md-2">
+                <input type="number" name="player_profile[academic_education_entries][][year]" class="form-control" placeholder="Year" min="1900" max="2100" value="<%= entry['year'] %>">
+              </div>
+              <div class="col-md-3">
+                <input type="text" name="player_profile[academic_education_entries][][description]" class="form-control" placeholder="Description" value="<%= entry['description'] %>">
+              </div>
+              <div class="col-md-1 d-flex align-items-center">
+                <button type="button" class="btn btn-outline-danger remove-education w-100"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-education"><i class="fas fa-plus me-2"></i>Add Education</button>
+  </div>
+
+  <!-- Training Camps -->
+  <div class="mb-4">
+    <h6 class="text-muted mb-3">Training Camps</h6>
+    <div id="training-camps-container">
+      <% if @profile.training_camp_entries_list.any? %>
+        <% @profile.training_camp_entries_list.each do |entry| %>
+          <div class="training-camp-entry mb-2">
+            <div class="row g-2">
+              <div class="col-md-6">
+                <input type="text" name="player_profile[training_camp_entries][][name]" class="form-control" placeholder="Camp Name" value="<%= entry['name'] %>">
+              </div>
+              <div class="col-md-2">
+                <input type="number" name="player_profile[training_camp_entries][][year]" class="form-control" placeholder="Year" min="1900" max="2100" value="<%= entry['year'] %>">
+              </div>
+              <div class="col-md-3">
+                <input type="text" name="player_profile[training_camp_entries][][description]" class="form-control" placeholder="Description" value="<%= entry['description'] %>">
+              </div>
+              <div class="col-md-1 d-flex align-items-center">
+                <button type="button" class="btn btn-outline-danger remove-training-camp w-100"><i class="fas fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm" id="add-training-camp"><i class="fas fa-plus me-2"></i>Add Camp</button>
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Achievements management
+  // Achievements management (name + year)
   const addAchievementBtn = document.getElementById('add-achievement');
   const achievementsContainer = document.getElementById('achievements-container');
+  if (addAchievementBtn && achievementsContainer) {
+    addAchievementBtn.addEventListener('click', function() {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'achievement-entry mb-2';
+      wrapper.innerHTML = `
+        <div class="row g-2">
+          <div class="col-md-7"><input type="text" name="player_profile[achievement_entries][][name]" class="form-control" placeholder="Achievement"></div>
+          <div class="col-md-3"><input type="number" name="player_profile[achievement_entries][][year]" class="form-control" placeholder="Year" min="1900" max="2100"></div>
+          <div class="col-md-2 d-flex align-items-center"><button type="button" class="btn btn-outline-danger remove-achievement w-100"><i class="fas fa-trash"></i></button></div>
+        </div>
+      `;
+      achievementsContainer.appendChild(wrapper);
+    });
+    achievementsContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-achievement')) e.target.closest('.achievement-entry').remove();
+    });
+  }
   
-  addAchievementBtn.addEventListener('click', function() {
-    const achievementEntry = document.createElement('div');
-    achievementEntry.className = 'achievement-entry mb-2';
-    achievementEntry.innerHTML = `
-      <div class="input-group">
-        <input type="text" name="player_profile[achievements][]" class="form-control" placeholder="Achievement">
-        <button type="button" class="btn btn-outline-danger remove-achievement">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    `;
-    achievementsContainer.appendChild(achievementEntry);
-  });
-  
-  achievementsContainer.addEventListener('click', function(e) {
-    if (e.target.closest('.remove-achievement')) {
-      e.target.closest('.achievement-entry').remove();
-    }
-  });
-  
-  // Training history management
-  const addTrainingBtn = document.getElementById('add-training');
-  const trainingContainer = document.getElementById('training-container');
-  
-  addTrainingBtn.addEventListener('click', function() {
-    const trainingEntry = document.createElement('div');
-    trainingEntry.className = 'training-entry mb-2';
-    trainingEntry.innerHTML = `
-      <div class="input-group">
-        <input type="text" name="player_profile[training_history][]" class="form-control" placeholder="Training/Academy">
-        <button type="button" class="btn btn-outline-danger remove-training">
-          <i class="fas fa-trash"></i>
-        </button>
-      </div>
-    `;
-    trainingContainer.appendChild(trainingEntry);
-  });
-  
-  trainingContainer.addEventListener('click', function(e) {
-    if (e.target.closest('.remove-training')) {
-      e.target.closest('.training-entry').remove();
-    }
-  });
+  // Education entries add/remove
+  const addEducationBtn = document.getElementById('add-education');
+  const educationContainer = document.getElementById('education-container');
+  if (addEducationBtn && educationContainer) {
+    addEducationBtn.addEventListener('click', function() {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'education-entry mb-2';
+      wrapper.innerHTML = `
+        <div class="row g-2">
+          <div class="col-md-6"><input type="text" name="player_profile[academic_education_entries][][name]" class="form-control" placeholder="School/College"></div>
+          <div class="col-md-2"><input type="number" name="player_profile[academic_education_entries][][year]" class="form-control" placeholder="Year" min="1900" max="2100"></div>
+          <div class="col-md-3"><input type="text" name="player_profile[academic_education_entries][][description]" class="form-control" placeholder="Description"></div>
+          <div class="col-md-1 d-flex align-items-center"><button type="button" class="btn btn-outline-danger remove-education w-100"><i class="fas fa-trash"></i></button></div>
+        </div>
+      `;
+      educationContainer.appendChild(wrapper);
+    });
+    educationContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-education')) e.target.closest('.education-entry').remove();
+    });
+  }
+
+  // Key Strengths
+  const addStrengthBtn = document.getElementById('add-strength');
+  const strengthsContainer = document.getElementById('key-strengths-container');
+  if (addStrengthBtn && strengthsContainer) {
+    addStrengthBtn.addEventListener('click', function() {
+      const entry = document.createElement('div');
+      entry.className = 'strength-entry mb-2';
+      entry.innerHTML = `
+        <div class="input-group">
+          <input type="text" name="player_profile[key_strengths][]" class="form-control" placeholder="e.g., Speed, Vision">
+          <button type="button" class="btn btn-outline-danger remove-strength"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+      strengthsContainer.appendChild(entry);
+    });
+    strengthsContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-strength')) {
+        e.target.closest('.strength-entry').remove();
+      }
+    });
+  }
+
+  // Fitness Tests
+  const addFitnessTestBtn = document.getElementById('add-fitness-test');
+  const fitnessTestsContainer = document.getElementById('fitness-tests-container');
+  if (addFitnessTestBtn && fitnessTestsContainer) {
+    addFitnessTestBtn.addEventListener('click', function() {
+      const entry = document.createElement('div');
+      entry.className = 'fitness-test-entry mb-2';
+      entry.innerHTML = `
+        <div class="input-group">
+          <input type="text" name="player_profile[fitness_tests][]" class="form-control" placeholder="e.g., Yo-Yo 18.2">
+          <button type="button" class="btn btn-outline-danger remove-fitness-test"><i class="fas fa-trash"></i></button>
+        </div>
+      `;
+      fitnessTestsContainer.appendChild(entry);
+    });
+    fitnessTestsContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-fitness-test')) {
+        e.target.closest('.fitness-test-entry').remove();
+      }
+    });
+  }
+
+  // Training Camp entries add/remove
+  const addTrainingCampBtn = document.getElementById('add-training-camp');
+  const trainingCampsContainer = document.getElementById('training-camps-container');
+  if (addTrainingCampBtn && trainingCampsContainer) {
+    addTrainingCampBtn.addEventListener('click', function() {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'training-camp-entry mb-2';
+      wrapper.innerHTML = `
+        <div class="row g-2">
+          <div class="col-md-6"><input type="text" name="player_profile[training_camp_entries][][name]" class="form-control" placeholder="Camp Name"></div>
+          <div class="col-md-2"><input type="number" name="player_profile[training_camp_entries][][year]" class="form-control" placeholder="Year" min="1900" max="2100"></div>
+          <div class="col-md-3"><input type="text" name="player_profile[training_camp_entries][][description]" class="form-control" placeholder="Description"></div>
+          <div class="col-md-1 d-flex align-items-center"><button type="button" class="btn btn-outline-danger remove-training-camp w-100"><i class="fas fa-trash"></i></button></div>
+        </div>`;
+      trainingCampsContainer.appendChild(wrapper);
+    });
+    trainingCampsContainer.addEventListener('click', function(e) {
+      if (e.target.closest('.remove-training-camp')) e.target.closest('.training-camp-entry').remove();
+    });
+  }
 });
 </script>

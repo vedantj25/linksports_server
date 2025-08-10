@@ -1,0 +1,49 @@
+<%= form_with model: [:admin, sport_attribute], local: true do |f| %>
+  <% if sport_attribute.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% sport_attribute.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= f.text_field :key, class: 'form-control', placeholder: 'key' %>
+        <%= f.label :key %>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= f.text_field :label, class: 'form-control', placeholder: 'label' %>
+        <%= f.label :label %>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="form-floating">
+        <%= f.select :field_type, options_for_select([['String','string'],['Select','select'],['Multi Select','multi_select']], sport_attribute.field_type), {}, class: 'form-select' %>
+        <%= f.label :field_type %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Options (comma or newline separated) for select types</label>
+    <%= text_area_tag 'sport_attribute[options_text]', (sport_attribute.options || []).join("\n"), class: 'form-control', rows: 4 %>
+  </div>
+
+  <div class="form-check form-switch mb-3">
+    <%= f.check_box :active, class: 'form-check-input', role: 'switch' %>
+    <%= f.label :active, class: 'form-check-label' %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', admin_sport_attributes_path, class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>
+
+

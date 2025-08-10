@@ -1,0 +1,36 @@
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Sport Attributes</h4>
+    <%= link_to "New Attribute", new_admin_sport_attribute_path, class: "btn btn-primary" %>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Label</th>
+        <th>Type</th>
+        <th>Options</th>
+        <th>Active</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @sport_attributes.each do |attr| %>
+        <tr>
+          <td><%= attr.key %></td>
+          <td><%= attr.label %></td>
+          <td><%= attr.field_type %></td>
+          <td class="small"><%= (attr.options || []).join(', ') %></td>
+          <td><%= attr.active? ? 'Yes' : 'No' %></td>
+          <td class="text-end">
+            <%= link_to "Show", admin_sport_attribute_path(attr), class: "btn btn-sm btn-outline-secondary" %>
+            <%= link_to "Edit", edit_admin_sport_attribute_path(attr), class: "btn btn-sm btn-outline-primary" %>
+            <%= link_to "Delete", admin_sport_attribute_path(attr), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: "btn btn-sm btn-outline-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+

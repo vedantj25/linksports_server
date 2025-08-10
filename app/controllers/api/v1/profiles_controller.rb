@@ -122,7 +122,10 @@ class Api::V1::ProfilesController < Api::V1::BaseController
     case @profile.type
     when "PlayerProfile"
       permitted += [ :height_cm, :weight_kg, :preferred_foot, :playing_status, :availability,
-                    achievements: [], training_history: [] ]
+                    { achievement_entries: [ :name, :year, :description ] },
+                    { academic_education_entries: [ :name, :year, :description ] },
+                    { training_camp_entries: [ :name, :year, :description ] },
+                    key_strengths: [], fitness_tests: [] ]
     when "CoachProfile"
       permitted += [ :experience_years, :hourly_rate, :currency,
                     certifications: [], coaching_history: [] ]
@@ -138,17 +141,71 @@ class Api::V1::ProfilesController < Api::V1::BaseController
     # Clear existing sports
     current_user.user_sports.destroy_all
 
-    # Add new sports
-    params[:sports].each do |sport_data|
-      next if sport_data[:sport_id].blank?
+    # Normalize incoming sports params to an array of attribute hashes
+    sports_param = params[:sports]
+    sport_entries = if sports_param.is_a?(ActionController::Parameters) || sports_param.is_a?(Hash)
+      sports_param.values
+    else
+      sports_param
+    end
 
-      current_user.user_sports.create!(
-        sport_id: sport_data[:sport_id],
-        position: sport_data[:position],
-        skill_level: sport_data[:skill_level],
-        years_experience: sport_data[:years_experience],
-        primary: sport_data[:primary] == true || sport_data[:primary] == "1"
+    Array(sport_entries).each do |entry|
+      attributes = case entry
+      when ActionController::Parameters then entry.to_unsafe_h
+      when Hash then entry
+      else {}
+      end
+
+      sport_id = attributes["sport_id"] || attributes[:sport_id]
+      next if sport_id.blank?
+
+      user_sport = current_user.user_sports.create!(
+        sport_id: sport_id,
+        position: attributes["position"] || attributes[:position],
+        years_experience: attributes["years_experience"] || attributes[:years_experience],
+        primary: (attributes["primary"] || attributes[:primary]).to_s == "1",
+        details: attributes["details"] || attributes[:details] || {}
       )
+
+      # Inline affiliations
+      Array(attributes["affiliations"] || attributes[:affiliations]).each do |aff|
+        next unless aff.is_a?(Hash) || aff.is_a?(ActionController::Parameters)
+        aff_hash = aff.is_a?(ActionController::Parameters) ? aff.to_unsafe_h : aff
+        next if (aff_hash["club_team_name"] || aff_hash[:club_team_name]).to_s.strip.empty?
+
+        # Handle checkbox + hidden field combinations robustly
+        current_values = Array(aff_hash["current"] || aff_hash[:current])
+        current_flag = current_values.any? { |v| ActiveModel::Type::Boolean.new.cast(v) }
+
+        start_month = (aff_hash["start_month"] || aff_hash[:start_month]).presence&.to_i
+        start_year  = (aff_hash["start_year"]  || aff_hash[:start_year]).presence&.to_i
+        end_month   = current_flag ? nil : (aff_hash["end_month"] || aff_hash[:end_month]).presence&.to_i
+        end_year    = current_flag ? nil : (aff_hash["end_year"]   || aff_hash[:end_year]).presence&.to_i
+
+        user_sport.user_sport_affiliations.create!(
+          club_team_name: aff_hash["club_team_name"] || aff_hash[:club_team_name],
+          league_competition: aff_hash["league_competition"] || aff_hash[:league_competition],
+          start_month: start_month,
+          start_year: start_year,
+          end_month: end_month,
+          end_year: end_year,
+          description: aff_hash["description"] || aff_hash[:description],
+          current: current_flag
+        )
+      end
+
+      # Inline tournaments
+      Array(attributes["tournaments"] || attributes[:tournaments]).each do |t|
+        next unless t.is_a?(Hash) || t.is_a?(ActionController::Parameters)
+        th = t.is_a?(ActionController::Parameters) ? t.to_unsafe_h : t
+        next if (th["tournament_name"] || th[:tournament_name]).to_s.strip.empty?
+
+        user_sport.user_sport_tournaments.create!(
+          tournament_name: th["tournament_name"] || th[:tournament_name],
+          year: (th["year"] || th[:year]).presence&.to_i,
+          description: th["description"] || th[:description]
+        )
+      end
     end
   end
 
@@ -205,8 +262,11 @@ class Api::V1::ProfilesController < Api::V1::BaseController
         preferred_foot: profile.preferred_foot,
         playing_status: profile.playing_status,
         availability: profile.availability,
-        achievements: profile.achievements_list,
-        training_history: profile.training_history_list
+        achievement_entries: profile.respond_to?(:achievement_entries_list) ? profile.achievement_entries_list : [],
+        academic_education_entries: profile.respond_to?(:academic_education_entries_list) ? profile.academic_education_entries_list : [],
+        training_camp_entries: profile.respond_to?(:training_camp_entries_list) ? profile.training_camp_entries_list : [],
+        key_strengths: profile.respond_to?(:key_strengths_list) ? profile.key_strengths_list : [],
+        fitness_tests: profile.respond_to?(:fitness_tests_list) ? profile.fitness_tests_list : []
       }
     when "CoachProfile"
       data[:coach_details] = {

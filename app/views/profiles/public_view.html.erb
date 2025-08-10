@@ -147,18 +147,58 @@
                             <span class="badge bg-primary ms-1">Primary</span>
                           <% end %>
                         </h6>
-                        <% if user_sport.position.present? %>
-                          <p class="text-muted small mb-1">Position: <%= user_sport.position %></p>
+                        <% selected_position = begin
+                             val = user_sport.details.is_a?(Hash) ? user_sport.details["position"] : nil
+                             if val.is_a?(Array)
+                               val.reject(&:blank?).join(', ')
+                             else
+                               val.presence
+                             end
+                           end %>
+                        <% if selected_position.present? || user_sport.position.present? %>
+                          <p class="text-muted small mb-1">Position: <%= selected_position || user_sport.position %></p>
                         <% end %>
                         <p class="text-muted small mb-0">
-                          <%= user_sport.skill_level.titleize %> • 
                           <%= pluralize(user_sport.years_experience, 'year') %> experience
                         </p>
-                      </div>
-                      <div class="skill-level-badge">
-                        <span class="badge bg-<%= skill_level_color(user_sport.skill_level) %>">
-                          <%= user_sport.skill_level.titleize %>
-                        </span>
+                        <% if user_sport.details.present? %>
+                          <ul class="small mt-2 mb-0">
+                            <% user_sport.details.each do |k, v| %>
+                              <% next if v.blank? %>
+                              <li><strong><%= k.to_s.humanize %>:</strong> <%= v.is_a?(Array) ? v.join(', ') : v %></li>
+                            <% end %>
+                          </ul>
+                        <% end %>
+                        <% if user_sport.user_sport_affiliations.any? %>
+                          <div class="mt-3">
+                            <h6 class="small text-muted mb-1"><i class="fas fa-briefcase me-1"></i>Club / Team History</h6>
+                            <ul class="small mb-0">
+                              <% user_sport.user_sport_affiliations.order(Arel.sql("current DESC, COALESCE(end_year, 9999) DESC, COALESCE(start_year, 0) DESC")).each do |aff| %>
+                                <li>
+                                  <strong><%= aff.club_team_name %></strong>
+                                  <% if aff.league_competition.present? %> — <%= aff.league_competition %><% end %>
+                                  <% if aff.start_year.present? || aff.end_year.present? %>
+                                    (<%= aff.pretty_duration %>)
+                                  <% end %>
+                                </li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+                        <% if user_sport.user_sport_tournaments.any? %>
+                          <div class="mt-3">
+                            <h6 class="small text-muted mb-1"><i class="fas fa-trophy me-1"></i>Tournaments</h6>
+                            <% tournaments_sorted = user_sport.user_sport_tournaments.order(year: :desc) %>
+                            <ul class="small mb-0">
+                              <% tournaments_sorted.each do |t| %>
+                                <li>
+                                  <strong><%= t.tournament_name %></strong>
+                                  <% if t.year.present? %> — <%= t.year %><% end %>
+                                </li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
                       </div>
                     </div>
                   </div>

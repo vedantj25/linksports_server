@@ -1,0 +1,76 @@
+<%= form_with model: [:admin, @user, @user_sport, affiliation], local: true do |f| %>
+  <% if affiliation.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% affiliation.errors.full_messages.each do |m| %>
+          <li><%= m %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= f.text_field :club_team_name, class: 'form-control', placeholder: 'Club/Team' %>
+        <%= f.label :club_team_name %>
+      </div>
+    </div>
+    <div class="col-md-6 mb-3">
+      <div class="form-floating">
+        <%= f.text_field :league_competition, class: 'form-control', placeholder: 'League/Competition' %>
+        <%= f.label :league_competition %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <div class="form-floating">
+        <%= f.number_field :start_year, class: 'form-control', placeholder: 'Start Year', min: 1900, max: Time.current.year %>
+        <%= f.label :start_year %>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="form-floating">
+        <%= f.select :start_month, options_for_select((1..12).map { |m| [Date::MONTHNAMES[m], m] }, f.object.start_month), { include_blank: 'Start Month' }, class: 'form-select' %>
+        <label for="user_sport_affiliation_start_month">Start Month</label>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="form-floating">
+        <%= f.number_field :end_year, class: 'form-control', placeholder: 'End Year', min: 1900, max: Time.current.year %>
+        <%= f.label :end_year %>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="form-floating">
+        <%= f.select :end_month, options_for_select((1..12).map { |m| [Date::MONTHNAMES[m], m] }, f.object.end_month), { include_blank: 'End Month' }, class: 'form-select' %>
+        <label for="user_sport_affiliation_end_month">End Month</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3 mb-3 d-flex align-items-center">
+      <div class="form-check form-switch mt-2">
+        <%= f.check_box :current, class: 'form-check-input' %>
+        <%= f.label :current, class: 'form-check-label' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <div class="form-floating">
+      <%= f.text_area :description, class: 'form-control', placeholder: 'Description', rows: 4, style: 'height: 120px;' %>
+      <%= f.label :description %>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit class: 'btn btn-primary' %>
+    <%= link_to 'Cancel', admin_user_user_sport_affiliations_path(@user, @user_sport), class: 'btn btn-outline-secondary' %>
+  </div>
+<% end %>
+
+

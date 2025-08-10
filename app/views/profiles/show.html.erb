@@ -24,6 +24,13 @@
                       <%= @profile.location_city %><%= ", #{@profile.location_state}" if @profile.location_state.present? %>
                     </p>
                   <% end %>
+                  <% if @profile.is_a?(PlayerProfile) && @profile.availability.present? %>
+                    <p class="mb-2">
+                      <span class="badge bg-<%= @profile.availability == 'available' ? 'success' : 'warning' %>">
+                        <%= @profile.availability.titleize %>
+                      </span>
+                    </p>
+                  <% end %>
                   <% if @profile.bio.present? %>
                     <p class="mb-0"><%= truncate(@profile.bio, length: 150) %></p>
                   <% end %>
@@ -131,7 +138,7 @@
         <div class="card mb-4">
           <div class="card-header">
             <h5 class="mb-0">
-              <i class="fas fa-medal me-2"></i>Sports & Skills
+              <i class="fas fa-medal me-2"></i>Sports
             </h5>
           </div>
           <div class="card-body">
@@ -147,18 +154,64 @@
                             <span class="badge bg-primary ms-1">Primary</span>
                           <% end %>
                         </h6>
-                        <% if user_sport.position.present? %>
-                          <p class="text-muted small mb-1">Position: <%= user_sport.position %></p>
+                        <% selected_position = begin
+                             val = user_sport.details.is_a?(Hash) ? user_sport.details["position"] : nil
+                             if val.is_a?(Array)
+                               val.reject(&:blank?).join(', ')
+                             else
+                               val.presence
+                             end
+                           end %>
+                        <% if selected_position.present? || user_sport.position.present? %>
+                          <p class="text-muted small mb-1">Position: <%= selected_position || user_sport.position %></p>
                         <% end %>
                         <p class="text-muted small mb-0">
-                          <%= user_sport.skill_level.titleize %> • 
                           <%= pluralize(user_sport.years_experience, 'year') %> experience
                         </p>
-                      </div>
-                      <div class="skill-level-badge">
-                        <span class="badge bg-<%= skill_level_color(user_sport.skill_level) %>">
-                          <%= user_sport.skill_level.titleize %>
-                        </span>
+                        <% if user_sport.details.present? %>
+                          <ul class="small mt-2 mb-0">
+                            <% user_sport.details.each do |k, v| %>
+                              <% next if v.blank? %>
+                              <li><strong><%= k.to_s.humanize %>:</strong> <%= v.is_a?(Array) ? v.join(', ') : v %></li>
+                            <% end %>
+                          </ul>
+                        <% end %>
+                        <% if user_sport.user_sport_affiliations.any? %>
+                          <div class="mt-3">
+                            <h6 class="small text-muted mb-1"><i class="fas fa-briefcase me-1"></i>Club / Team History</h6>
+                            <ul class="small mb-0">
+                              <% user_sport.user_sport_affiliations.order(Arel.sql("current DESC, COALESCE(end_year, 9999) DESC, COALESCE(start_year, 0) DESC")).each do |aff| %>
+                                <li>
+                                  <strong><%= aff.club_team_name %></strong>
+                                  <% if aff.league_competition.present? %> — <%= aff.league_competition %><% end %>
+                                  <% duration = aff.pretty_duration %>
+                                  <% if duration.present? %>
+                                    (<%= duration %>)
+                                  <% end %>
+                                </li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
+                        <% if user_sport.user_sport_tournaments.any? %>
+                          <div class="mt-3">
+                            <h6 class="small text-muted mb-1"><i class="fas fa-trophy me-1"></i>Tournaments</h6>
+                            <% tournaments_sorted = user_sport.user_sport_tournaments.order(year: :desc) %>
+                            <ul class="small mb-0">
+                              <% tournaments_sorted.each do |t| %>
+                                <li>
+                                  <strong><%= t.tournament_name %></strong>
+                                  <% if t.year.present? %> — <%= t.year %><% end %>
+                                  <% if t.description.present? %>
+                                    <ul class="small mb-0">
+                                      <li><%= t.description %></li>
+                                    </ul>
+                                  <% end %>
+                                </li>
+                              <% end %>
+                            </ul>
+                          </div>
+                        <% end %>
                       </div>
                     </div>
                   </div>
@@ -169,8 +222,54 @@
         </div>
       <% end %>
 
+      <!-- Grouped sections removed; affiliations and tournaments are shown per sport above -->
+
       <!-- Type-specific sections -->
       <%= render "profiles/#{@user.user_type}_details", profile: @profile if @profile.type %>
+
+      <!-- Media Gallery -->
+      <% if (@profile.photos.attached? && @profile.photos.count > 0) || (@profile.highlight_videos.present?) || (@profile.media_links.present?) %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <i class="fas fa-photo-film me-2"></i>Media Gallery
+            </h5>
+          </div>
+          <div class="card-body">
+            <% if @profile.photos.attached? && @profile.photos.count > 0 %>
+              <div class="row mb-3">
+                <% @profile.photos.each do |photo| %>
+                  <div class="col-6 mb-3">
+                    <%= image_tag photo.variant(resize_to_fill: [600, 400]) rescue image_tag(photo, class: "img-fluid rounded") %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+
+            <% if @profile.highlight_videos.present? %>
+              <div class="mb-3">
+                <h6>Highlight Videos</h6>
+                <ul class="mb-0">
+                  <% @profile.highlight_videos.each do |url| %>
+                    <li><%= link_to url, url, target: "_blank", rel: "noopener" %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+
+            <% if @profile.media_links.present? %>
+              <div>
+                <h6>Interviews / Media Coverage</h6>
+                <ul class="mb-0">
+                  <% @profile.media_links.each do |url| %>
+                    <li><%= link_to url, url, target: "_blank", rel: "noopener" %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
     </div>
 
     <!-- Sidebar -->
@@ -199,6 +298,12 @@
             <p class="mb-0">
               <i class="fab fa-youtube me-2 text-muted"></i>
               <%= link_to "YouTube", @profile.youtube_url, target: "_blank", class: "text-decoration-none" %>
+            </p>
+          <% end %>
+          <% if @profile.linkedin_url.present? %>
+            <p class="mb-0 mt-2">
+              <i class="fab fa-linkedin me-2 text-muted"></i>
+              <%= link_to "LinkedIn", @profile.linkedin_url, target: "_blank", class: "text-decoration-none" %>
             </p>
           <% end %>
         </div>

@@ -1,6 +1,6 @@
 <div class="sports-form">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h6 class="mb-0">Sports & Skills</h6>
+    <h6 class="mb-0">Sports</h6>
     <button type="button" class="btn btn-outline-primary btn-sm" id="add-sport">
       <i class="fas fa-plus me-2"></i>Add Sport
     </button>
@@ -9,7 +9,7 @@
   <div id="sports-container">
     <% if user_sports.any? %>
       <% user_sports.each_with_index do |user_sport, index| %>
-        <div class="sport-entry card mb-3" data-index="<%= index %>">
+        <div class="sport-entry card mb-3" data-index="<%= index %>" data-details='<%= (user_sport.details || {}).to_json %>'>
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-3">
               <h6 class="card-title mb-0">Sport <%= index + 1 %></h6>
@@ -17,7 +17,7 @@
                 <i class="fas fa-trash"></i>
               </button>
             </div>
-            
+
             <div class="row">
               <div class="col-md-6 mb-3">
                 <div class="form-floating">
@@ -32,26 +32,9 @@
                   <label>Sport</label>
                 </div>
               </div>
-              
-              <div class="col-md-6 mb-3">
-                <div class="form-floating">
-                  <input type="text" name="sports[<%= index %>][position]" class="form-control" 
-                         placeholder="Position" value="<%= user_sport.position %>">
-                  <label>Position (e.g., Forward, Midfielder)</label>
-                </div>
-              </div>
-              
-              <div class="col-md-4 mb-3">
-                <div class="form-floating">
-                  <select name="sports[<%= index %>][skill_level]" class="form-select" required>
-                    <option value="">Skill Level</option>
-                    <option value="beginner" <%= 'selected' if user_sport.skill_level == 'beginner' %>>Beginner</option>
-                    <option value="intermediate" <%= 'selected' if user_sport.skill_level == 'intermediate' %>>Intermediate</option>
-                    <option value="advanced" <%= 'selected' if user_sport.skill_level == 'advanced' %>>Advanced</option>
-                    <option value="expert" <%= 'selected' if user_sport.skill_level == 'expert' %>>Expert</option>
-                  </select>
-                  <label>Skill Level</label>
-                </div>
+            
+              <div class="col-12 mb-3">
+                <div class="sport-attributes"></div>
               </div>
               
               <div class="col-md-4 mb-3">
@@ -73,6 +56,102 @@
                 </div>
               </div>
             </div>
+            <!-- Club / Team History -->
+            <div class="row mt-2">
+              <div class="col-12">
+                <h6 class="text-muted mb-2">Club / Team History</h6>
+                <div class="affiliations-section">
+                  <% if user_sport.respond_to?(:user_sport_affiliations) && user_sport.user_sport_affiliations.any? %>
+                    <% user_sport.user_sport_affiliations.order(Arel.sql("current DESC, COALESCE(end_year, 9999) DESC, COALESCE(start_year, 0) DESC")).each_with_index do |aff, aidx| %>
+                      <div class="affiliation-entry border rounded p-3 mb-2">
+                        <div class="row g-2">
+                          <div class="col-md-6">
+                            <label class="form-label">Club/Team</label>
+                            <input name="sports[<%= index %>][affiliations][<%= aidx %>][club_team_name]" class="form-control" placeholder="e.g., Bengaluru FC U18" value="<%= aff.club_team_name %>">
+                            <div class="form-text">Your club or team name</div>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">League/Competition</label>
+                            <input name="sports[<%= index %>][affiliations][<%= aidx %>][league_competition]" class="form-control" placeholder="e.g., State League Division 1" value="<%= aff.league_competition %>">
+                            <div class="form-text">League or competition name</div>
+                          </div>
+                        </div>
+                        <div class="row g-2 mt-1">
+                          <div class="col-md-3">
+                            <label class="form-label d-block">Start Month</label>
+                            <select name="sports[<%= index %>][affiliations][<%= aidx %>][start_month]" class="form-select">
+                              <option value="">Select month</option>
+                              <% (1..12).each do |m| %>
+                                <option value="<%= m %>" <%= 'selected' if aff.start_month == m %>><%= Date::MONTHNAMES[m] %></option>
+                              <% end %>
+                            </select>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label">Start Year</label>
+                            <input type="number" name="sports[<%= index %>][affiliations][<%= aidx %>][start_year]" class="form-control" placeholder="YYYY" min="1900" max="2100" value="<%= aff.start_year %>">
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label d-block">Current</label>
+                            <div class="form-check form-switch">
+                              <input type="hidden" name="sports[<%= index %>][affiliations][<%= aidx %>][current]" value="0">
+                              <input class="form-check-input affiliation-current-toggle" type="checkbox" name="sports[<%= index %>][affiliations][<%= aidx %>][current]" value="1" <%= 'checked' if aff.current %>>
+                              <label class="form-check-label">I currently play here</label>
+                            </div>
+                          </div>
+                          <div class="col-md-3 d-flex align-items-end justify-content-end">
+                            <button type="button" class="btn btn-outline-danger remove-affiliation"><i class="fas fa-trash me-1"></i>Remove</button>
+                          </div>
+                        </div>
+                        <div class="row g-2 mt-1 end-date-fields <%= 'd-none' if aff.current %>">
+                          <div class="col-md-3">
+                            <label class="form-label d-block">End Month</label>
+                            <select name="sports[<%= index %>][affiliations][<%= aidx %>][end_month]" class="form-select">
+                              <option value="">Select month</option>
+                              <% (1..12).each do |m| %>
+                                <option value="<%= m %>" <%= 'selected' if aff.end_month == m %>><%= Date::MONTHNAMES[m] %></option>
+                              <% end %>
+                            </select>
+                          </div>
+                          <div class="col-md-3">
+                            <label class="form-label">End Year</label>
+                            <input type="number" name="sports[<%= index %>][affiliations][<%= aidx %>][end_year]" class="form-control" placeholder="YYYY" min="1900" max="2100" value="<%= aff.end_year %>">
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm add-affiliation"><i class="fas fa-plus me-2"></i>Add Club/Team</button>
+              </div>
+            </div>
+
+            <!-- Tournament Participation -->
+            <div class="row mt-3">
+              <div class="col-12">
+                <h6 class="text-muted mb-2">Tournament Participation</h6>
+                <div class="tournaments-section">
+                  <% if user_sport.respond_to?(:user_sport_tournaments) && user_sport.user_sport_tournaments.any? %>
+                    <% user_sport.user_sport_tournaments.order(created_at: :desc).each_with_index do |t, tidx| %>
+                      <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                          <input name="sports[<%= index %>][tournaments][<%= tidx %>][tournament_name]" class="form-control" placeholder="Tournament Name" value="<%= t.tournament_name %>">
+                        </div>
+                        <div class="col-md-3">
+                          <input type="number" name="sports[<%= index %>][tournaments][<%= tidx %>][year]" class="form-control" placeholder="Year (e.g., 2022)" min="1900" max="2100" value="<%= t.year %>">
+                        </div>
+                        <div class="col-md-2">
+                          <input name="sports[<%= index %>][tournaments][<%= tidx %>][description]" class="form-control" placeholder="Description" value="<%= t.description %>">
+                        </div>
+                        <div class="col-md-1 d-flex align-items-center">
+                          <button type="button" class="btn btn-outline-danger remove-row w-100"><i class="fas fa-trash"></i></button>
+                        </div>
+                      </div>
+                    <% end %>
+                  <% end %>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm add-tournament"><i class="fas fa-plus me-2"></i>Add Tournament</button>
+              </div>
+            </div>
           </div>
         </div>
       <% end %>
@@ -83,13 +162,13 @@
   
   <div class="text-muted small">
     <i class="fas fa-info-circle me-2"></i>
-    Add the sports you play and your skill level. Mark your primary sport to highlight your main focus.
+    Add the sports you play. Mark your primary sport to highlight your main focus.
   </div>
 </div>
 
 <!-- Template for new sport entries -->
 <template id="sport-entry-template">
-  <div class="sport-entry card mb-3" data-index="">
+   <div class="sport-entry card mb-3" data-index="">
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-start mb-3">
         <h6 class="card-title mb-0">Sport</h6>
@@ -110,25 +189,8 @@
             <label>Sport</label>
           </div>
         </div>
-        
-        <div class="col-md-6 mb-3">
-          <div class="form-floating">
-            <input type="text" name="sports[][position]" class="form-control" placeholder="Position">
-            <label>Position (e.g., Forward, Midfielder)</label>
-          </div>
-        </div>
-        
-        <div class="col-md-4 mb-3">
-          <div class="form-floating">
-            <select name="sports[][skill_level]" class="form-select" required>
-              <option value="">Skill Level</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-              <option value="expert">Expert</option>
-            </select>
-            <label>Skill Level</label>
-          </div>
+        <div class="col-12 mb-3">
+          <div class="sport-attributes"></div>
         </div>
         
         <div class="col-md-4 mb-3">
@@ -216,5 +278,250 @@ document.addEventListener('DOMContentLoaded', function() {
   if (sportIndex === 0) {
     addSportBtn.click();
   }
+  // Dynamic attribute rendering
+  const attrMapEl = document.getElementById('sport-attributes-map');
+  if (!attrMapEl) return;
+  const sportAttributesMap = JSON.parse(attrMapEl.textContent);
+
+  function renderAttributesForEntry(entryEl) {
+    const index = entryEl.getAttribute('data-index');
+    const sportSelect = entryEl.querySelector("select[name^='sports'][name$='[sport_id]']");
+    const container = entryEl.querySelector('.sport-attributes');
+    if (!sportSelect || !container) return;
+    const sportId = sportSelect.value;
+    container.innerHTML = '';
+    if (!sportId || !sportAttributesMap[sportId]) return;
+    const attrs = sportAttributesMap[sportId];
+    let existingDetails = {};
+    try { existingDetails = JSON.parse(entryEl.getAttribute('data-details')) || {}; } catch(e) {}
+    attrs.forEach(attr => {
+      const fieldWrapper = document.createElement('div');
+      fieldWrapper.className = 'mb-2';
+      const label = document.createElement('label');
+      label.className = 'form-label';
+      label.textContent = attr.label;
+      fieldWrapper.appendChild(label);
+      let inputEl;
+      const baseName = `sports[${index}][details][${attr.key}]`;
+      if (attr.field_type === 'select') {
+        inputEl = document.createElement('select');
+        inputEl.className = 'form-select';
+        inputEl.name = baseName;
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Select';
+        inputEl.appendChild(placeholder);
+        (attr.options || []).forEach(opt => {
+          const o = document.createElement('option');
+          o.value = opt; o.textContent = opt;
+          if (existingDetails[attr.key] === opt) o.selected = true;
+          inputEl.appendChild(o);
+        });
+      } else if (attr.field_type === 'multi_select') {
+        inputEl = document.createElement('select');
+        inputEl.className = 'form-select multi-select-enhanced';
+        inputEl.name = baseName + '[]';
+        inputEl.multiple = true;
+        const existingArray = Array.isArray(existingDetails[attr.key]) ? existingDetails[attr.key] : [];
+        (attr.options || []).forEach(opt => {
+          const o = document.createElement('option');
+          o.value = opt; o.textContent = opt;
+          if (existingArray.includes(opt)) o.selected = true;
+          inputEl.appendChild(o);
+        });
+      } else {
+        inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.className = 'form-control';
+        inputEl.name = baseName;
+        if (existingDetails[attr.key]) inputEl.value = existingDetails[attr.key];
+      }
+      fieldWrapper.appendChild(inputEl);
+      container.appendChild(fieldWrapper);
+    });
+
+    // Enhance all multi-selects in this entry with Choices.js
+    try {
+      const selects = entryEl.querySelectorAll('select.multi-select-enhanced');
+      selects.forEach(sel => {
+        if (sel.dataset.enhanced === '1') return;
+        /* global Choices */
+        const instance = new window.Choices(sel, {
+          removeItemButton: true,
+          shouldSort: false,
+          placeholder: true,
+          placeholderValue: 'Select',
+          searchEnabled: true,
+          itemSelectText: ''
+        });
+        sel.dataset.enhanced = '1';
+      });
+    } catch(e) {}
+  }
+
+  function initAttr(entryEl) {
+    const selectEl = entryEl.querySelector("select[name^='sports'][name$='[sport_id]']");
+    if (selectEl) {
+      renderAttributesForEntry(entryEl);
+      selectEl.addEventListener('change', () => renderAttributesForEntry(entryEl));
+    }
+  }
+
+  document.querySelectorAll('.sport-entry').forEach(initAttr);
+
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(m => m.addedNodes.forEach(node => {
+      if (node.nodeType === 1 && node.classList.contains('sport-entry')) initAttr(node);
+    }));
+  });
+  observer.observe(sportsContainer, { childList: true });
+
+  // Inline management for affiliations and tournaments per sport
+  // Add sections for simple entry (name, years, description) that post as params to be handled server-side later
+  document.querySelectorAll('.sport-entry').forEach(entry => addHistorySections(entry));
+  const containerObserver = new MutationObserver(m => m.forEach(mu => mu.addedNodes.forEach(n => { if (n.classList && n.classList.contains('sport-entry')) addHistorySections(n); })));
+  containerObserver.observe(sportsContainer, { childList: true });
+
+  function addHistorySections(entry) {
+    let affContainer = entry.querySelector('.affiliations-section');
+    let tContainer = entry.querySelector('.tournaments-section');
+    if (!affContainer || !tContainer) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'row mt-2';
+      wrapper.innerHTML = `
+        <div class="col-12">
+          <h6 class="text-muted mb-2">Club / Team History</h6>
+          <div class="affiliations-section"></div>
+          <button type="button" class="btn btn-outline-primary btn-sm add-affiliation"><i class="fas fa-plus me-2"></i>Add Club/Team</button>
+        </div>
+        <div class="col-12 mt-3">
+          <h6 class="text-muted mb-2">Tournament Participation</h6>
+          <div class="tournaments-section"></div>
+          <button type="button" class="btn btn-outline-primary btn-sm add-tournament"><i class="fas fa-plus me-2"></i>Add Tournament</button>
+        </div>`;
+      entry.querySelector('.card-body').appendChild(wrapper);
+      affContainer = wrapper.querySelector('.affiliations-section');
+      tContainer = wrapper.querySelector('.tournaments-section');
+    }
+
+    const idx = entry.getAttribute('data-index');
+    // Initialize per-sport counters for affiliations and tournaments based on existing DOM
+    if (!entry.dataset.affIndexCounter) {
+      entry.dataset.affIndexCounter = String(entry.querySelectorAll('.affiliations-section .affiliation-entry').length);
+    }
+    if (!entry.dataset.tournIndexCounter) {
+      entry.dataset.tournIndexCounter = String(entry.querySelectorAll('.tournaments-section > .row').length);
+    }
+
+    entry.addEventListener('click', function(e) {
+      if (e.target.closest('.add-affiliation')) {
+        const card = document.createElement('div');
+        card.className = 'affiliation-entry border rounded p-3 mb-2';
+        const monthOptions = ['<option value="">Select month</option>'].concat(
+          [...Array(12).keys()].map(i => `<option value="${i+1}">${new Date(0, i).toLocaleString('en', { month: 'long' })}</option>`)
+        ).join('');
+        const aidx = parseInt(entry.dataset.affIndexCounter || '0', 10);
+        card.innerHTML = `
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label class="form-label">Club/Team</label>
+              <input name="sports[${idx}][affiliations][${aidx}][club_team_name]" class="form-control" placeholder="e.g., Bengaluru FC U18">
+              <div class="form-text">Your club or team name</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">League/Competition</label>
+              <input name="sports[${idx}][affiliations][${aidx}][league_competition]" class="form-control" placeholder="e.g., State League Division 1">
+              <div class="form-text">League or competition name</div>
+            </div>
+          </div>
+          <div class="row g-2 mt-1">
+            <div class="col-md-3">
+              <label class="form-label d-block">Start Month</label>
+              <select name="sports[${idx}][affiliations][${aidx}][start_month]" class="form-select">${monthOptions}</select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">Start Year</label>
+              <input type="number" name="sports[${idx}][affiliations][${aidx}][start_year]" class="form-control" placeholder="YYYY" min="1900" max="2100">
+            </div>
+            <div class="col-md-3">
+              <label class="form-label d-block">Current</label>
+              <div class="form-check form-switch">
+                <input type="hidden" name="sports[${idx}][affiliations][${aidx}][current]" value="0">
+                <input class="form-check-input affiliation-current-toggle" type="checkbox" name="sports[${idx}][affiliations][${aidx}][current]" value="1">
+                <label class="form-check-label">I currently play here</label>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex align-items-end justify-content-end">
+              <button type="button" class="btn btn-outline-danger remove-affiliation"><i class="fas fa-trash me-1"></i>Remove</button>
+            </div>
+          </div>
+          <div class="row g-2 mt-1 end-date-fields">
+            <div class="col-md-3">
+              <label class="form-label d-block">End Month</label>
+              <select name="sports[${idx}][affiliations][${aidx}][end_month]" class="form-select">${monthOptions}</select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label">End Year</label>
+              <input type="number" name="sports[${idx}][affiliations][${aidx}][end_year]" class="form-control" placeholder="YYYY" min="1900" max="2100">
+            </div>
+          </div>`;
+        affContainer.appendChild(card);
+        entry.dataset.affIndexCounter = String(aidx + 1);
+      }
+      if (e.target.closest('.add-tournament')) {
+        const row = document.createElement('div');
+        row.className = 'row g-2 mb-2';
+        const tidx = parseInt(entry.dataset.tournIndexCounter || '0', 10);
+        row.innerHTML = `
+          <div class="col-md-6"><input name="sports[${idx}][tournaments][${tidx}][tournament_name]" class="form-control" placeholder="Tournament Name"></div>
+          <div class="col-md-3"><input type="number" name="sports[${idx}][tournaments][${tidx}][year]" class="form-control" placeholder="Year (e.g., 2022)" min="1900" max="2100"></div>
+          <div class="col-md-2"><input name="sports[${idx}][tournaments][${tidx}][description]" class="form-control" placeholder="Description"></div>
+          <div class="col-md-1 d-flex align-items-center"><button type="button" class="btn btn-outline-danger remove-row w-100"><i class="fas fa-trash"></i></button></div>`;
+        tContainer.appendChild(row);
+        entry.dataset.tournIndexCounter = String(tidx + 1);
+      }
+      if (e.target.closest('.remove-affiliation')) e.target.closest('.affiliation-entry').remove();
+      if (e.target.closest('.remove-row')) e.target.closest('.row').remove();
+    });
+    
+    // Toggle end-date visibility based on Current switch
+    entry.addEventListener('change', function(e) {
+      const toggle = e.target.closest('.affiliation-current-toggle');
+      if (!toggle) return;
+      const entry = e.target.closest('.affiliation-entry');
+      if (!entry) return;
+      const endFields = entry.querySelector('.end-date-fields');
+      if (!endFields) return;
+      const inputs = endFields.querySelectorAll('select, input');
+      if (e.target.checked) {
+        endFields.classList.add('d-none');
+        inputs.forEach(i => { i.value = ''; i.disabled = true; });
+      } else {
+        endFields.classList.remove('d-none');
+        inputs.forEach(i => { i.disabled = false; });
+      }
+    });
+
+    // Initialize visibility for any pre-rendered affiliation cards
+    entry.querySelectorAll('.affiliation-entry').forEach(card => {
+      const toggle = card.querySelector('.affiliation-current-toggle');
+      const endFields = card.querySelector('.end-date-fields');
+      if (!endFields || !toggle) return;
+      const inputs = endFields.querySelectorAll('select, input');
+      if (toggle.checked) {
+        endFields.classList.add('d-none');
+        inputs.forEach(i => { i.disabled = true; });
+      } else {
+        endFields.classList.remove('d-none');
+        inputs.forEach(i => { i.disabled = false; });
+      }
+    });
+  }
 });
 </script>
+
+<script type="application/json" id="sport-attributes-map"><%= raw((
+  @sports.each_with_object({}) do |s, h|
+    h[s.id] = s.sport_attributes.map { |a| { key: a.key, label: a.label, field_type: a.field_type, options: a.options } }
+  end
+).to_json) %></script>
