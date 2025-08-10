@@ -17,28 +17,30 @@
       <%= link_to "New Sport", new_admin_sport_path, class: "btn btn-primary" %>
     </div>
   </div>
-  <table class="table table-hover align-middle">
+  <div class="admin-table-wrapper">
+  <table class="table table-hover align-middle admin-table-sticky">
     <thead>
       <tr>
-        <th><%= sort_link('id', 'ID') %></th>
-        <th><%= sort_link('name', 'Name') %></th>
-        <th><%= sort_link('category', 'Category') %></th>
-        <th><%= sort_link('active', 'Active') %></th>
-        <th></th>
+        <th class="td-nowrap"><%= sort_link('id', 'ID') %></th>
+        <th class="td-nowrap"><%= sort_link('name', 'Name') %></th>
+        <th class="td-nowrap"><%= sort_link('category', 'Category') %></th>
+        <th class="td-nowrap"><%= sort_link('active', 'Active') %></th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @sports.each do |s| %>
         <tr>
-          <td><%= s.id %></td>
-          <td><%= s.name %></td>
-          <td><%= s.category %></td>
-          <td><span class="badge <%= s.active ? 'bg-success' : 'bg-secondary' %>"><%= s.active ? 'Yes' : 'No' %></span></td>
-          <td><%= link_to "View", admin_sport_path(s), class: "btn btn-sm btn-outline-primary" %></td>
+          <td class="td-nowrap"><%= s.id %></td>
+          <td class="td-nowrap"><%= s.name %></td>
+          <td class="td-nowrap"><%= s.category %></td>
+          <td class="td-nowrap"><span class="badge <%= s.active ? 'bg-success' : 'bg-secondary' %>"><%= s.active ? 'Yes' : 'No' %></span></td>
+          <td class="td-nowrap"><%= link_to "View", admin_sport_path(s), class: "btn btn-sm btn-outline-primary" %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @sports %>
   </div>
 

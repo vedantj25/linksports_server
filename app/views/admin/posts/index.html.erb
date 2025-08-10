@@ -19,30 +19,32 @@
       <% end %>
     <% end %>
   </div>
-  <table class="table table-hover align-middle mt-3">
+  <div class="admin-table-wrapper">
+  <table class="table table-hover align-middle mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th><%= sort_link('id', 'ID') %></th>
-        <th>User</th>
-        <th>Content</th>
-        <th><%= sort_link('visibility', 'Visibility') %></th>
-        <th><%= sort_link('created_at', 'Created') %></th>
-        <th></th>
+        <th class="td-nowrap"><%= sort_link('id', 'ID') %></th>
+        <th class="td-nowrap">User</th>
+        <th class="td-nowrap">Content</th>
+        <th class="td-nowrap"><%= sort_link('visibility', 'Visibility') %></th>
+        <th class="td-nowrap"><%= sort_link('created_at', 'Created') %></th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @posts.each do |p| %>
         <tr>
-          <td><%= p.id %></td>
-          <td><%= link_to p.user.display_name, admin_user_path(p.user) %></td>
-          <td><%= truncate(p.content, length: 80) %></td>
-          <td><%= p.visibility %></td>
-          <td><%= time_ago_in_words(p.created_at) %> ago</td>
-          <td><%= link_to "View", admin_post_path(p), class: "btn btn-sm btn-outline-primary" %></td>
+          <td class="td-nowrap"><%= p.id %></td>
+          <td class="td-nowrap"><%= link_to p.user.display_name, admin_user_path(p.user) %></td>
+          <td class="td-truncate"><%= truncate(p.content, length: 80) %></td>
+          <td class="td-nowrap"><%= p.visibility %></td>
+          <td class="td-nowrap"><%= time_ago_in_words(p.created_at) %> ago</td>
+          <td class="td-nowrap"><%= link_to "View", admin_post_path(p), class: "btn btn-sm btn-outline-primary" %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @posts %>
 </div>
 

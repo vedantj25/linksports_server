@@ -1,3 +1,7 @@
+<% content_for :admin_breadcrumb do %>
+  <%= link_to 'Sport Attributes', admin_sport_attributes_path %> <span class="divider">/</span> <span>New</span>
+<% end %>
+
 <div class="container-fluid">
   <h4>New Sport Attribute</h4>
   <%= render 'form', sport_attribute: @sport_attribute %>

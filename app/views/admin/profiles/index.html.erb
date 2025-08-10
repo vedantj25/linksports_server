@@ -4,32 +4,34 @@
 
 <div class="container-fluid">
   <h1 class="h3 mb-3">Profiles</h1>
-  <table class="table table-hover align-middle mt-3">
+  <div class="admin-table-wrapper">
+  <table class="table table-hover align-middle mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th><%= sort_link('id', 'ID') %></th>
-        <th>User</th>
-        <th><%= sort_link('type', 'Type') %></th>
-        <th><%= sort_link('display_name', 'Display Name') %></th>
-        <th><%= sort_link('location_city', 'City') %></th>
-        <th><%= sort_link('created_at', 'Created') %></th>
-        <th></th>
+        <th class="td-nowrap"><%= sort_link('id', 'ID') %></th>
+        <th class="td-nowrap">User</th>
+        <th class="td-nowrap"><%= sort_link('type', 'Type') %></th>
+        <th class="td-nowrap"><%= sort_link('display_name', 'Display Name') %></th>
+        <th class="td-nowrap"><%= sort_link('location_city', 'City') %></th>
+        <th class="td-nowrap"><%= sort_link('created_at', 'Created') %></th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @profiles.each do |p| %>
         <tr>
-          <td><%= p.id %></td>
-          <td><%= link_to p.user.display_name, admin_user_path(p.user) %></td>
-          <td><%= p.type %></td>
-          <td><%= p.display_name %></td>
-          <td><%= p.location_city %></td>
-          <td><%= time_ago_in_words(p.created_at) %> ago</td>
-          <td><%= link_to "View", admin_profile_path(p), class: "btn btn-sm btn-outline-primary" %></td>
+          <td class="td-nowrap"><%= p.id %></td>
+          <td class="td-nowrap"><%= link_to p.user.display_name, admin_user_path(p.user) %></td>
+          <td class="td-nowrap"><%= p.type %></td>
+          <td class="td-truncate"><%= p.display_name %></td>
+          <td class="td-nowrap"><%= p.location_city %></td>
+          <td class="td-nowrap"><%= time_ago_in_words(p.created_at) %> ago</td>
+          <td class="td-nowrap"><%= link_to "View", admin_profile_path(p), class: "btn btn-sm btn-outline-primary" %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @profiles %>
 </div>
 

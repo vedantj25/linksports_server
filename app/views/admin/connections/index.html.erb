@@ -4,30 +4,32 @@
 
 <div class="container-fluid">
   <h1 class="h3 mb-3">Connections</h1>
-  <table class="table table-hover align-middle mt-3">
+  <div class="admin-table-wrapper">
+  <table class="table table-hover align-middle mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th><%= sort_link('id', 'ID') %></th>
-        <th>Requester</th>
-        <th>Addressee</th>
-        <th><%= sort_link('status', 'Status') %></th>
-        <th><%= sort_link('created_at', 'Created') %></th>
-        <th></th>
+        <th class="td-nowrap"><%= sort_link('id', 'ID') %></th>
+        <th class="td-nowrap">Requester</th>
+        <th class="td-nowrap">Addressee</th>
+        <th class="td-nowrap"><%= sort_link('status', 'Status') %></th>
+        <th class="td-nowrap"><%= sort_link('created_at', 'Created') %></th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @connections.each do |c| %>
         <tr>
-          <td><%= c.id %></td>
-          <td><%= link_to c.requester_id, admin_user_path(c.requester_id) %></td>
-          <td><%= link_to c.addressee_id, admin_user_path(c.addressee_id) %></td>
-          <td><%= c.status %></td>
-          <td><%= time_ago_in_words(c.created_at) %> ago</td>
-          <td><%= button_to "Remove", admin_connection_path(c), method: :delete, class: "btn btn-sm btn-danger" %></td>
+          <td class="td-nowrap"><%= c.id %></td>
+          <td class="td-nowrap"><%= link_to c.requester_id, admin_user_path(c.requester_id) %></td>
+          <td class="td-nowrap"><%= link_to c.addressee_id, admin_user_path(c.addressee_id) %></td>
+          <td class="td-nowrap"><%= c.status %></td>
+          <td class="td-nowrap"><%= time_ago_in_words(c.created_at) %> ago</td>
+          <td class="td-nowrap"><%= button_to "Remove", admin_connection_path(c), method: :delete, class: "btn btn-sm btn-danger" %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @connections %>
 </div>
 

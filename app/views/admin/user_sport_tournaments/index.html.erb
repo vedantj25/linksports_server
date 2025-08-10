@@ -3,20 +3,21 @@
     <h4>Tournaments for <%= @user_sport.sport.name %> — <%= @user.display_name %></h4>
     <%= link_to 'Add Tournament', new_admin_user_user_sport_tournament_path(@user, @user_sport), class: 'btn btn-primary' %>
   </div>
-  <table class="table table-striped">
+  <div class="admin-table-wrapper">
+  <table class="table table-striped admin-table-sticky">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Year</th>
-        <th></th>
+        <th class="td-nowrap">Name</th>
+        <th class="td-nowrap">Year</th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @tournaments.each do |t| %>
         <tr>
-          <td><%= t.tournament_name %></td>
-          <td><%= t.year %></td>
-          <td class="text-end">
+          <td class="td-truncate"><%= t.tournament_name %></td>
+          <td class="td-nowrap"><%= t.year %></td>
+          <td class="text-end td-nowrap">
             <%= link_to 'Edit', edit_admin_user_user_sport_tournament_path(@user, @user_sport, t), class: 'btn btn-sm btn-outline-primary' %>
             <%= link_to 'Delete', admin_user_user_sport_tournament_path(@user, @user_sport, t), data: { turbo_method: :delete, turbo_confirm: 'Are you sure?' }, class: 'btn btn-sm btn-outline-danger' %>
           </td>
@@ -24,6 +25,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 </div>
 
 

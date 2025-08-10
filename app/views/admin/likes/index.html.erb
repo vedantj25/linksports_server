@@ -4,28 +4,30 @@
 
 <div class="container-fluid">
   <h1 class="h3 mb-3">Likes</h1>
-  <table class="table table-hover align-middle mt-3">
+  <div class="admin-table-wrapper">
+  <table class="table table-hover align-middle mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th><%= sort_link('id', 'ID') %></th>
-        <th>User</th>
-        <th>Post</th>
-        <th><%= sort_link('created_at', 'Created') %></th>
-        <th></th>
+        <th class="td-nowrap"><%= sort_link('id', 'ID') %></th>
+        <th class="td-nowrap">User</th>
+        <th class="td-nowrap">Post</th>
+        <th class="td-nowrap"><%= sort_link('created_at', 'Created') %></th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @likes.each do |l| %>
         <tr>
-          <td><%= l.id %></td>
-          <td><%= link_to l.user.display_name, admin_user_path(l.user) %></td>
-          <td><%= link_to l.post_id, admin_post_path(l.post_id) %></td>
-          <td><%= time_ago_in_words(l.created_at) %> ago</td>
-          <td><%= button_to "Remove", admin_like_path(l), method: :delete, class: "btn btn-sm btn-danger" %></td>
+          <td class="td-nowrap"><%= l.id %></td>
+          <td class="td-nowrap"><%= link_to l.user.display_name, admin_user_path(l.user) %></td>
+          <td class="td-nowrap"><%= link_to l.post_id, admin_post_path(l.post_id) %></td>
+          <td class="td-nowrap"><%= time_ago_in_words(l.created_at) %> ago</td>
+          <td class="td-nowrap"><%= button_to "Remove", admin_like_path(l), method: :delete, class: "btn btn-sm btn-danger" %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @likes %>
 </div>
 

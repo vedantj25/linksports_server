@@ -21,26 +21,27 @@
     <% end %>
   </div>
   
-
-  <table class="table table-hover align-middle mt-3">
+  
+  <div class="admin-table-wrapper">
+  <table class="table table-hover align-middle mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th><%= sort_link('id', 'ID') %></th>
-        <th><%= sort_link('first_name', 'Name') %></th>
-        <th><%= sort_link('username', 'Username') %></th>
-        <th><%= sort_link('email', 'Email') %></th>
-        <th><%= sort_link('active', 'Status') %></th>
-        <th>Actions</th>
+        <th class="td-nowrap"><%= sort_link('id', 'ID') %></th>
+        <th class="td-nowrap"><%= sort_link('first_name', 'Name') %></th>
+        <th class="td-nowrap"><%= sort_link('username', 'Username') %></th>
+        <th class="td-nowrap"><%= sort_link('email', 'Email') %></th>
+        <th class="td-nowrap"><%= sort_link('active', 'Status') %></th>
+        <th class="td-nowrap">Actions</th>
       </tr>
     </thead>
     <tbody>
       <% @users.each do |u| %>
         <tr>
-          <td><%= u.id %></td>
-          <td><%= u.display_name %></td>
-          <td><%= u.username %></td>
-          <td><%= u.email %></td>
-          <td>
+          <td class="td-nowrap"><%= u.id %></td>
+          <td class="td-nowrap"><%= u.display_name %></td>
+          <td class="td-nowrap"><%= u.username %></td>
+          <td class="td-truncate"><%= u.email %></td>
+          <td class="td-nowrap">
             <% if u.banned %>
               <span class="badge bg-danger">Banned</span>
             <% elsif !u.active %>
@@ -49,13 +50,14 @@
               <span class="badge bg-success">Active</span>
             <% end %>
           </td>
-          <td>
+          <td class="td-nowrap">
             <%= link_to "View", admin_user_path(u), class: "btn btn-sm btn-outline-primary" %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
 
   <%= paginate @users %>
 </div>

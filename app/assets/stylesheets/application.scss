@@ -323,3 +323,42 @@ footer {
 .profile-edit .row.g-2>[class^="col-"] {
   min-width: 0;
 }
+
+// -----------------------------
+// Admin Table Helpers
+// -----------------------------
+.admin-table-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+// Remove extra bottom gap when wrapping in scroll container
+.admin-table-wrapper .table {
+  margin-bottom: 0;
+}
+
+// Keep table headers visible while scrolling vertically
+.admin-table-sticky thead th {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 1;
+}
+
+// Improve readability
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+// Utilities for cells
+.td-nowrap {
+  white-space: nowrap;
+}
+
+.td-truncate {
+  max-width: 360px; // adjust per table needs
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

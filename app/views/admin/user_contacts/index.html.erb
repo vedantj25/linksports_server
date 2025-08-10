@@ -1,25 +1,26 @@
 <div class="container mt-4">
   <h1>User Contacts</h1>
-  <table class="table table-striped mt-3">
+  <div class="admin-table-wrapper">
+  <table class="table table-striped mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th>ID</th>
-        <th>User</th>
-        <th>Type</th>
-        <th>Value</th>
-        <th>Verified</th>
-        <th></th>
+        <th class="td-nowrap">ID</th>
+        <th class="td-nowrap">User</th>
+        <th class="td-nowrap">Type</th>
+        <th class="td-nowrap">Value</th>
+        <th class="td-nowrap">Verified</th>
+        <th class="td-nowrap"></th>
       </tr>
     </thead>
     <tbody>
       <% @user_contacts.each do |uc| %>
         <tr>
-          <td><%= uc.id %></td>
-          <td><%= link_to uc.user.display_name, admin_user_path(uc.user) %></td>
-          <td><%= uc.contact_type %></td>
-          <td><%= uc.value %></td>
-          <td><%= uc.verified ? "Yes" : "No" %></td>
-          <td>
+          <td class="td-nowrap"><%= uc.id %></td>
+          <td class="td-nowrap"><%= link_to uc.user.display_name, admin_user_path(uc.user) %></td>
+          <td class="td-nowrap"><%= uc.contact_type %></td>
+          <td class="td-truncate"><%= uc.value %></td>
+          <td class="td-nowrap"><%= uc.verified ? "Yes" : "No" %></td>
+          <td class="td-nowrap">
             <%= form_with url: admin_user_contact_path(uc), method: :patch, local: true do |f| %>
               <%= hidden_field_tag :verified, (!uc.verified).to_s %>
               <%= submit_tag(uc.verified ? "Mark Unverified" : "Mark Verified", class: "btn btn-sm btn-secondary") %>
@@ -29,6 +30,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @user_contacts %>
 </div>
 

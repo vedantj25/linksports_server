@@ -1,28 +1,30 @@
 <div class="container mt-4">
   <h1>Admin Invitations</h1>
   <%= link_to "New Invitation", new_admin_invitation_path, class: "btn btn-primary" %>
-  <table class="table table-striped mt-3">
+  <div class="admin-table-wrapper">
+  <table class="table table-striped mt-3 admin-table-sticky">
     <thead>
       <tr>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Token</th>
-        <th>Expires At</th>
-        <th>Accepted</th>
+        <th class="td-nowrap">Email</th>
+        <th class="td-nowrap">Role</th>
+        <th class="td-nowrap">Token</th>
+        <th class="td-nowrap">Expires At</th>
+        <th class="td-nowrap">Accepted</th>
       </tr>
     </thead>
     <tbody>
       <% @invitations.each do |inv| %>
         <tr>
-          <td><%= inv.email %></td>
-          <td><%= inv.role %></td>
-          <td><code><%= inv.token %></code></td>
-          <td><%= inv.expires_at %></td>
-          <td><%= inv.accepted_at ? "Yes" : "No" %></td>
+          <td class="td-nowrap"><%= inv.email %></td>
+          <td class="td-nowrap"><%= inv.role %></td>
+          <td class="td-truncate"><code><%= inv.token %></code></td>
+          <td class="td-nowrap"><%= inv.expires_at %></td>
+          <td class="td-nowrap"><%= inv.accepted_at ? "Yes" : "No" %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  </div>
   <%= paginate @invitations %>
 </div>
 
