@@ -33,7 +33,7 @@ module AppConfig
   end
 
   def mailer_sender
-    ENV.fetch("MAILER_SENDER", "no-reply@linksports.local")
+    ENV.fetch("MAILER_SENDER", "donotreply@voldebug.in")
   end
 
   # Twilio (used by phone verification)
