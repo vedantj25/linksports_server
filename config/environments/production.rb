@@ -48,12 +48,14 @@ Rails.application.configure do
 
   # Replace the default in-process memory cache store with a durable alternative.
   # Redis cache store with namespace and SSL support
-  redis_url = ENV.fetch("REDIS_URL")
-  config.cache_store = :redis_cache_store, {
-    url: redis_url,
-    namespace: "cache:prod",
-    ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
-  }
+  redis_url = ENV["REDIS_URL"] || ENV["REDIS_TLS_URL"] || ENV["UPSTASH_REDIS_URL"]
+  if redis_url
+    config.cache_store = :redis_cache_store, {
+      url: redis_url,
+      namespace: "cache:prod",
+      ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+    }
+  end
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :sidekiq
