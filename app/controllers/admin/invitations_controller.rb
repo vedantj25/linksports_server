@@ -1,6 +1,7 @@
 module Admin
   class InvitationsController < ApplicationController
     skip_before_action :require_admin!, only: [ :accept ]
+    before_action :authenticate_user!, only: [ :accept ]
 
     def index
       @invitations = AdminInvitation.order(created_at: :desc).page(params[:page]).per(25)
@@ -13,8 +14,8 @@ module Admin
     def create
       @invitation = AdminInvitation.new(invitation_params.merge(invited_by: current_user))
       if @invitation.save
-        # TODO: deliver email with token
-        redirect_to admin_invitations_path, notice: "Invitation created."
+        AdminInvitationMailer.with(invitation: @invitation).invite_email.deliver_later
+        redirect_to admin_invitations_path, notice: "Invitation created and email sent."
       else
         render :new, status: :unprocessable_entity
       end

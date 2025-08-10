@@ -1,0 +1,17 @@
+<h1>You're invited to be an <%= @invitation.role.titleize %> on LinkSports</h1>
+
+<p>Hello,</p>
+
+<p>
+  <%= @invitation.invited_by.email %> has invited you to become a
+  <strong><%= @invitation.role %></strong> on LinkSports.
+  This invitation will expire on <%= @invitation.expires_at.strftime('%b %d, %Y %H:%M %Z') %>.
+</p>
+
+<p>
+  <a href="<%= @accept_url %>">Accept invitation</a>
+</p>
+
+<p>If you weren't expecting this email, you can ignore it.</p>
+
+
