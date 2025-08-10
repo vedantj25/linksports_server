@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_120200) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_120300) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -168,74 +168,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_120200) do
     t.index ["user_id"], name: "index_profiles_on_user_id"
   end
 
-  create_table "solid_cable_messages", force: :cascade do |t|
-    t.string "stream", null: false
-    t.text "data", null: false
-    t.datetime "created_at", null: false
-    t.index ["stream"], name: "index_solid_cable_messages_on_stream"
-  end
-
-  create_table "solid_cable_streams", force: :cascade do |t|
-    t.string "stream", null: false
-    t.string "connection_identifier", null: false
-    t.datetime "created_at", null: false
-    t.index ["stream", "connection_identifier"], name: "index_solid_cable_streams_on_stream_and_connection_identifier", unique: true
-  end
-
-  create_table "solid_cache_entries", id: { type: :string, limit: 512 }, force: :cascade do |t|
-    t.binary "value"
-    t.datetime "expires_at"
-    t.datetime "created_at", null: false
-    t.index ["expires_at"], name: "index_solid_cache_entries_on_expires_at"
-  end
-
-  create_table "solid_cache_versions", force: :cascade do |t|
-    t.string "key", limit: 512, null: false
-    t.string "version", null: false
-    t.datetime "created_at", null: false
-    t.index ["key", "version"], name: "index_solid_cache_versions_on_key_and_version", unique: true
-  end
-
-  create_table "solid_queue_jobs", force: :cascade do |t|
-    t.bigint "queue_id", null: false
-    t.string "klass", null: false
-    t.text "arguments"
-    t.integer "priority", default: 0
-    t.datetime "scheduled_at"
-    t.datetime "finished_at"
-    t.string "status", default: "pending", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["queue_id", "status"], name: "index_solid_queue_jobs_on_queue_id_and_status"
-    t.index ["queue_id"], name: "index_solid_queue_jobs_on_queue_id"
-  end
-
-  create_table "solid_queue_queues", force: :cascade do |t|
-    t.string "name", null: false
-    t.integer "limit"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_solid_queue_queues_on_name", unique: true
-  end
-
-  create_table "solid_queue_recurring_tasks", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "task", null: false
-    t.text "arguments"
-    t.string "schedule", null: false
-    t.datetime "last_enqueued_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_solid_queue_recurring_tasks_on_name", unique: true
-  end
-
-  create_table "solid_queue_workers", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "last_heartbeat_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "sports", force: :cascade do |t|
     t.string "name"
     t.string "category"
@@ -334,7 +266,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_120200) do
   add_foreign_key "posts", "sports"
   add_foreign_key "posts", "users"
   add_foreign_key "profiles", "users"
-  add_foreign_key "solid_queue_jobs", "solid_queue_queues", column: "queue_id"
   add_foreign_key "user_contacts", "users"
   add_foreign_key "user_sports", "sports"
   add_foreign_key "user_sports", "users"

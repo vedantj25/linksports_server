@@ -28,8 +28,8 @@ services:
         value: "true"
       - key: APP_HOST
         value: linksports-web.onrender.com
-      - key: SOLID_QUEUE_IN_PUMA
-        value: "true"
+      - key: REDIS_URL
+        sync: false
 # After first successful deploy, if you need to seed production data once:
 # Open the service Shell in Render and run: `bundle exec rails db:seed`
 

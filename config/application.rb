@@ -41,5 +41,7 @@ module LinksportsServer
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+    config.active_job.queue_adapter = :sidekiq
+    # Use Redis for cache in production via env configuration; development/test override in env files
   end
 end

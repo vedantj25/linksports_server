@@ -1,6 +1,2 @@
 #!/usr/bin/env ruby
-
-require_relative "../config/environment"
-require "solid_queue/cli"
-
-SolidQueue::Cli.start(ARGV)
+puts "This project uses Sidekiq. Start the worker with: bundle exec sidekiq -C config/sidekiq.yml"
