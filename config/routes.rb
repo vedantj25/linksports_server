@@ -88,6 +88,31 @@ Rails.application.routes.draw do
         collection do
           get :categories
         end
+        member do
+          get :attributes
+        end
+      end
+
+      # UserSports and nested resources for affiliations (clubs) and tournaments
+      resources :user_sports, only: [ :index, :create, :update, :destroy ] do
+        resources :affiliations, controller: "user_sport_affiliations", only: [ :index, :create, :update, :destroy ]
+        resources :tournaments, controller: "user_sport_tournaments", only: [ :index, :create, :update, :destroy ]
+      end
+
+      # Posts
+      resources :posts, only: [ :index, :create, :show, :destroy ] do
+        member do
+          post :like
+          delete :unlike
+          post :upload_media
+        end
+      end
+
+      # Connections
+      resources :connections, only: [ :index, :create, :update, :destroy ] do
+        collection do
+          get :requests
+        end
       end
     end
   end

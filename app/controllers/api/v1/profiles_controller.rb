@@ -167,7 +167,7 @@ class Api::V1::ProfilesController < Api::V1::BaseController
         details: attributes["details"] || attributes[:details] || {}
       )
 
-      # Inline affiliations
+      # Inline affiliations (clubs)
       Array(attributes["affiliations"] || attributes[:affiliations]).each do |aff|
         next unless aff.is_a?(Hash) || aff.is_a?(ActionController::Parameters)
         aff_hash = aff.is_a?(ActionController::Parameters) ? aff.to_unsafe_h : aff
@@ -237,7 +237,7 @@ class Api::V1::ProfilesController < Api::V1::BaseController
         posts_count: profile.user.posts_count,
         connections_count: profile.user.connections_count
       },
-      sports: profile.user.user_sports.includes(:sport).map do |user_sport|
+      sports: profile.user.user_sports.includes(:sport, :user_sport_affiliations, :user_sport_tournaments).map do |user_sport|
         {
           id: user_sport.id,
           sport: {
@@ -246,9 +246,32 @@ class Api::V1::ProfilesController < Api::V1::BaseController
             category: user_sport.sport.category
           },
           position: user_sport.position,
-          skill_level: user_sport.skill_level,
+           skill_level: (user_sport.details || {})['skill_level'],
           years_experience: user_sport.years_experience,
-          primary: user_sport.primary?
+          primary: user_sport.primary?,
+          details: user_sport.details || {},
+          affiliations: user_sport.user_sport_affiliations.order(created_at: :desc).map do |aff|
+            {
+              id: aff.id,
+              club_team_name: aff.club_team_name,
+              league_competition: aff.league_competition,
+              start_month: aff.start_month,
+              start_year: aff.start_year,
+              end_month: aff.end_month,
+              end_year: aff.end_year,
+              current: aff.current,
+              description: aff.description,
+              pretty_duration: aff.pretty_duration
+            }
+          end,
+          tournaments: user_sport.user_sport_tournaments.order(year: :desc).map do |t|
+            {
+              id: t.id,
+              tournament_name: t.tournament_name,
+              year: t.year,
+              description: t.description
+            }
+          end
         }
       end
     }

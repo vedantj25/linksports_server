@@ -5,6 +5,9 @@ class Post < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_many :likes, dependent: :destroy
 
+  # Media attachments for posts (images/videos)
+  has_many_attached :media
+
   enum :visibility, { public_post: 0, connections_only: 1, private_post: 2 }
 
   validates :content, presence: true, length: { maximum: 4000 }

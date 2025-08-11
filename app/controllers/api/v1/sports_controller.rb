@@ -1,5 +1,5 @@
 class Api::V1::SportsController < Api::V1::BaseController
-  skip_before_action :authenticate_with_jwt!, only: [ :index, :show ]
+  skip_before_action :authenticate_with_jwt!, only: [ :index, :show, :attributes ]
 
   # GET /api/v1/sports
   def index
@@ -58,5 +58,19 @@ class Api::V1::SportsController < Api::V1::BaseController
                             }
                           }
     })
+  end
+
+  # GET /api/v1/sports/:id/attributes
+  def attributes
+    sport = Sport.active.find(params[:id])
+    attrs = sport.sport_attributes.order(:key).map do |a|
+      {
+        key: a.key,
+        label: a.label,
+        field_type: a.field_type,
+        options: a.options
+      }
+    end
+    render_success({ attributes: attrs })
   end
 end
